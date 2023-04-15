@@ -13,24 +13,21 @@ public class TrainStation {
     private final Rail switchingRail;
     private final Rail trainRail;
 
-    private final int[] wagonValues;
     private final Shunter shunter;
-    public TrainStation(int... ints) {
+    public TrainStation(Integer... ints) {
         // 12, 4, 19, 20, 3, 16, 4, 6, 9, 8
-        wagonValues = ints;
         parkingRail = new Rail("parkingRail", listToStack(ints));
         switchingRail = new Rail("switchingRail", new Stack<>());
         trainRail = new Rail("trainRail", new Stack<>());
-        shunter = new Shunter(parkingRail, switchingRail, trainRail);
-    }
 
-    public void moveWagons() {
-        String[] optimalPath = getOptimalPath(wagonValues);
+        String[] optimalPath = getOptimalPath(integerToIntArray(ints));
+
+        shunter = new Shunter(parkingRail, switchingRail, trainRail);
         shunter.shuntNew(optimalPath);
     }
 
-    private Integer[] intToIntegerArray(int[] ints) {
-        Integer[] arr = new Integer[ints.length];
+    private int[] integerToIntArray(Integer[] ints) {
+        int[] arr = new int[ints.length];
         for (int i = 0; i < ints.length; i++){
             arr[i] = ints[i];
         }
@@ -42,8 +39,8 @@ public class TrainStation {
         return g.getOptimalPath();
     }
 
-    private Stack<Integer> listToStack(int[] arr) {
-        List<Integer> wagons = Arrays.asList(intToIntegerArray(arr));
+    private Stack<Integer> listToStack(Integer[] arr) {
+        List<Integer> wagons = Arrays.asList(arr);
         Collections.reverse(wagons);
         Stack<Integer> aS = new Stack<>();
         aS.addAll(wagons);
