@@ -7,11 +7,12 @@ public class DirectedAcyclicGraph {
 
     //    Node1[][] layers;    // for each layer stores a pair of nodes representing LP and RP
 
-    public DirectedAcyclicGraph(int[] wagons) {
-        this.wagons = wagons;
+    private boolean print = false;
+    public DirectedAcyclicGraph(int[] wagonNumbers) {
+        this.wagons = wagonNumbers;
         // get different wagons-values unique ascending
         Set<Integer> helper = new HashSet<>();
-        for (int wagon : wagons) {
+        for (int wagon : wagonNumbers) {
             helper.add(wagon);
         }
         differentWagonValues = helper.stream().mapToInt(Number::intValue).toArray();
@@ -20,11 +21,17 @@ public class DirectedAcyclicGraph {
         // construct cost-arrays
         int[][] C_L_arrays = new int[differentWagonValues.length][];
         for (int i = 0; i < C_L_arrays.length; i++) {
-            C_L_arrays[i] = getC_Li(wagons, differentWagonValues[i]);
+            C_L_arrays[i] = getC_Li(wagonNumbers, differentWagonValues[i]);
         }
         int[][] C_R_arrays = new int[differentWagonValues.length][];
         for (int i = 0; i < C_R_arrays.length; i++) {
-            C_R_arrays[i] = getC_Ri(wagons, differentWagonValues[i]);
+            C_R_arrays[i] = getC_Ri(wagonNumbers, differentWagonValues[i]);
+        }
+        if (print) {
+            System.out.println("C_L_arrays: ");
+            System.out.println(Arrays.deepToString(C_L_arrays));
+            System.out.println("C_R_arrays: ");
+            System.out.println(Arrays.deepToString(C_R_arrays));
         }
 
         //-------------------------------------------------
@@ -62,57 +69,64 @@ public class DirectedAcyclicGraph {
             // i.e. not adjusting for the fact that actually, the original last index of the current value does not have a cost on the next layer anymore, because the value of that index was removed in the previous iteration
         }
 
-        for (Node n : LPNodes) {
-            System.out.println(n.getName() + ": " + n.getAdjacentNodesString());
-        }
-        System.out.println();
-        for (Node n : RPNodes) {
-            System.out.println(n.getName() + ": " + n.getAdjacentNodesString());
+        if (print) {
+            for (Node n : LPNodes) {
+                System.out.println(n.getName() + ": " + n.getAdjacentNodesString());
+            }
+            System.out.println();
+            for (Node n : RPNodes) {
+                System.out.println(n.getName() + ": " + n.getAdjacentNodesString());
+            }
         }
 
         // create graph and add all nodes to graph
 
         // create starting node with two nodes of first layer as successors (maybe with cost of first iteration as cost -> would make sense, (but to determine the best path itself should not matter))
-        Node startingNode = new Node("start");
+//        Node startingNode = new Node("start");
 
-        startingNode.addDestination(LPNodes[0], 0);
-        startingNode.addDestination(RPNodes[0], 0);
+//        startingNode.addDestination(LPNodes[0], 0);
+//        startingNode.addDestination(RPNodes[0], 0);
         Graph g = new Graph();
-        g.addNode(startingNode);
+        Node LP1 = LPNodes[0]; // will always have to start at LP1
+//        g.addNode(LP1);
         for (int i = 0; i < differentWagonValues.length; i++) {
             g.addNode(LPNodes[i]);
             g.addNode(RPNodes[i]);
         }
 
-        Dijkstra.calculateShortestPathFromSource(g, startingNode);
+        Dijkstra.calculateShortestPathFromSource(g, LP1);
 
-        for (Node n : g.getNodes()) {
-            System.out.println(n.getName() + ": " + n.getDistance());
+        if (print) {
+            for (Node n : g.getNodes()) {
+                System.out.println(n.getName() + ": " + n.getDistance());
+            }
+            System.out.println();
         }
-        System.out.println();
         // we only care about RP5 and LP5
         // (actually, perhaps only RP4 and RP4, since the cost for ascending the last layer may always be zero so the costs for LP5 and RP5 will be the same, but whatever)
         // yep, we will look at the second-to-last layer's nodes, since these will probably provide more information on the actual path up to that point (again, the cost of ascending from second-to-last to last is 0, so we might as well leave it out? -> worry about that later)
-        String LPName = LPNodes[differentWagonValues.length - 2].getName();
-        String RPName = RPNodes[differentWagonValues.length - 2].getName();
+        String LPName = LPNodes[differentWagonValues.length - 1].getName();
+        String RPName = RPNodes[differentWagonValues.length - 1].getName();
 
         Node LP4 = g.getNodeByName(LPName);
         Node RP4 = g.getNodeByName(RPName);
 
         if (LP4.getDistance() <= RP4.getDistance()) {    // for now takes LP4 if they are of equal length
+            if (print) System.out.println("LP (" + RP4.getDistance() + ") shorter than or equal to RP (" + LP4.getDistance() +")!");
             optimalPath = LP4.getShortestPath().stream().map(Node::getName).toArray(String[]::new);
-        }
-        else {
+        } else {
+            if(print) System.out.println("RP (" + RP4.getDistance() + ") shorter than LP (" + LP4.getDistance() +")!");
             optimalPath = RP4.getShortestPath().stream().map(Node::getName).toArray(String[]::new);
         }
 
-        // compare and see which node can be reached faster - if it's the same, possibly look at both bc it's interesting, but then it really does not matter which one we pick
-        System.out.println("Distance from start to (second-to-)last LP-Node(" + LPName + "): " + LP4.getDistance() + " (which makes for " + (LP4.getDistance() + costForFirstRemoval) + " in total extra cost)");
-        System.out.println("Distance from start to (second-to-)last RP-Node(" + RPName + "): " + RP4.getDistance() + " (which makes for " + (RP4.getDistance() + costForFirstRemoval) + " in total extra cost)");
-        System.out.println("The shortest path to the LP-Node: " + Arrays.toString(LP4.getShortestPath().stream().map(Node::getName).toArray()));
-        System.out.println("The shortest path to the RP-Node: " + Arrays.toString(RP4.getShortestPath().stream().map(Node::getName).toArray()));
-        System.out.println();
-        System.out.println("""
+        if (print) {
+            // compare and see which node can be reached faster - if it's the same, possibly look at both bc it's interesting, but then it really does not matter which one we pick
+            System.out.println("Distance from start to (second-to-)last LP-Node(" + LPName + "): " + LP4.getDistance() + " (which makes for " + (LP4.getDistance() + costForFirstRemoval) + " in total extra cost)");
+            System.out.println("Distance from start to (second-to-)last RP-Node(" + RPName + "): " + RP4.getDistance() + " (which makes for " + (RP4.getDistance() + costForFirstRemoval) + " in total extra cost)");
+            System.out.println("The shortest path to the LP-Node: " + Arrays.toString(LP4.getShortestPath().stream().map(Node::getName).toArray()));
+            System.out.println("The shortest path to the RP-Node: " + Arrays.toString(RP4.getShortestPath().stream().map(Node::getName).toArray()));
+            System.out.println();
+            System.out.println("""
                 Please note that this extra cost is not equal to the number of movements which have to be made to remove all values / wagons.
                 If one was allowed to reposition the pointer to their heart's content after the removal of every number (i.e. to either the 
                 leftmost or rightmost position of an occurrence of the current number / value) this total extra cost would be zero, because 
@@ -124,6 +138,7 @@ public class DirectedAcyclicGraph {
                 occurrences of the current wagon value it encounters while moving to the leftmost or rightmost (i.e. optimal) occurrence / position 
                 of that value.
                 """);
+        }
         //        if (LP5.getDistance() <= RP5.getDistance()) {
 //        }
 
@@ -197,7 +212,7 @@ public class DirectedAcyclicGraph {
     private int getLastPos(int i) {
         // equal to last index of first value
         int lC = getLastOccurrence(wagons, differentWagonValues[i]);
-        System.out.println("After the removal of all wagons (FROM LEFT TO RIGHT) with the smallest wagon value (" + differentWagonValues[i]
+        if (print) System.out.println("After the removal of all wagons (FROM LEFT TO RIGHT) with the smallest wagon value (" + differentWagonValues[i]
                 + "), pointer stands at " + lC);
         return lC;
     }
@@ -205,7 +220,7 @@ public class DirectedAcyclicGraph {
     private int getFirstPos(int i) {
         // equal to last index of first value
         int lC = getFirstOccurrence(wagons, differentWagonValues[i]);
-        System.out.println("After the removal of all wagons (FROM RIGHT TO LEFT) with the smallest wagon value (" + differentWagonValues[i]
+        if (print) System.out.println("After the removal of all wagons (FROM RIGHT TO LEFT) with the smallest wagon value (" + differentWagonValues[i]
                 + "), pointer stands at " + lC);
         return lC;
     }
