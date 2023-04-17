@@ -104,6 +104,28 @@ public class Shunter {
         return getLogSize();
     }
 
+    public int shunt2equal() {
+        for (int i = 0; i < wagonValues.length; i++) {
+//            // get Rail on which wagon with value is closest
+            int wagonNr = wagonValues[i];
+            int paPos = parkingRail.getSmallestPosOfNr(wagonNr);
+            int swPos = switchingRail.getSmallestPosOfNr(wagonNr);
+
+            if (swPos == -1 || (paPos != -1 && paPos <= swPos)) {
+                while (parkingRail.getNextWagon() != wagonNr) {
+                    switchWagon(parkingRail, switchingRail);
+                }
+                switchWagon(parkingRail, trainRail);
+            } else {
+                while (switchingRail.getNextWagon() != wagonNr) {
+                    switchWagon(switchingRail, parkingRail);
+                }
+                switchWagon(switchingRail, trainRail);
+            }
+        }
+        if (print) log.print();
+        return getLogSize();
+    }
     /**
      * This function will move all wagons from the from-Rail to the to-Rail until there are no more wagons with the
      * specified value in the from-Rail. All wagons with value == nr will be moved from the from-Rail onto the

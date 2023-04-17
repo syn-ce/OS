@@ -26,15 +26,33 @@ public class Main {
 //        ts41.moveOld();
         //  1404 vs 1370
 
+//        List<int[]> won = new ArrayList<>();
+
+        multipleRdmTesting(100, 100);
+
+        TrainStation ts7 = new TrainStation(2, 3, 1, 4, 2);
+        TrainStation ts71 = new TrainStation(2, 3, 1, 4, 2);
+        ts71.moveOld();
+        ts7.moveNew();
+
+//        TrainStation ts6 = new TrainStation(10, 2, 3, 8, 8, 7, 6, 6, 2, 3); // -> this example was fixed by fixing the starting node to the left node of the first layer (LP1, so to speak); indeed, this had not been the case before, though it should have (since we always have to start from the left on the first layer)
+//        TrainStation ts61 = new TrainStation(10, 2, 3, 8, 8, 7, 6, 6, 2, 3);
+//        ts6.moveNew();
+//        ts61.moveOld();
+//        TrainStation ts5 = new TrainStation(2, 5, 4, 4, 9, 10, 8, 9, 3, 5);   -> this example was fixed by adjusting two indices: if the Shunter needed to consult the Graph while removing the second-to-last number, it would not have looked at the graph because of this indexing error, though it could (and should) have done so
+//        TrainStation ts51 = new TrainStation(2, 5, 4, 4, 9, 10, 8, 9, 3, 5);
+//        ts5.moveNew();
+//        ts51.moveOld();
+    }
+
+    private static void multipleRdmTesting(int nrOfIterations, int nrOfRuns) {
         int totalWon = 0;
         int totalDraw = 0;
         long totalNewSum = 0;
         long totalOldSum = 0;
-        int nrOfIterations = 100;
-        int nrOfRuns = 100;
-        int totalTests = nrOfIterations*nrOfRuns;
+        int totalTests = nrOfIterations * nrOfRuns;
         for (int i = 0; i < nrOfIterations; i++) {
-            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 256, 256);
+            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 7, 7);
             totalOldSum += res[0];
             totalNewSum += res[1];
             totalWon += res[2];
@@ -48,16 +66,6 @@ public class Main {
         System.out.println("Won: " + totalWon + "/" + totalTests);
         System.out.println("Draw: " + totalDraw + "/" + totalTests);
         System.out.println("Lost: " + (totalTests - totalWon - totalDraw) + "/" + totalTests);
-
-
-//        TrainStation ts6 = new TrainStation(10, 2, 3, 8, 8, 7, 6, 6, 2, 3); // -> this example was fixed by fixing the starting node to the left node of the first layer (LP1, so to speak); indeed, this had not been the case before, though it should have (since we always have to start from the left on the first layer)
-//        TrainStation ts61 = new TrainStation(10, 2, 3, 8, 8, 7, 6, 6, 2, 3);
-//        ts6.moveNew();
-//        ts61.moveOld();
-//        TrainStation ts5 = new TrainStation(2, 5, 4, 4, 9, 10, 8, 9, 3, 5);   -> this example was fixed by adjusting two indices: if the Shunter needed to consult the Graph while removing the second-to-last number, it would not have looked at the graph because of this indexing error, though it could (and should) have done so
-//        TrainStation ts51 = new TrainStation(2, 5, 4, 4, 9, 10, 8, 9, 3, 5);
-//        ts5.moveNew();
-//        ts51.moveOld();
     }
 
     private static int[] rdmTestingNewVsOldShunt(int nrOfRuns, int nrOfWagons, int maxWagonValue) {
@@ -73,17 +81,17 @@ public class Main {
                 wagons[j] = wagon;
             }
             TrainStation tsOld = new TrainStation(wagons);
-            int oldLogLength = tsOld.moveOld();
+            TrainStation tsOld2 = new TrainStation(wagons);
+            int oldLogLength = Math.min(tsOld.moveOld(), tsOld2.moveOld2());
             TrainStation tsNew = new TrainStation(wagons);
             int newLogLength = tsNew.moveNew();
 
             if (newLogLength < oldLogLength) {
                 newWasSmaller++;
-            }
-            else if (newLogLength == oldLogLength) {
+                System.out.println("New beat old here: " + Arrays.toString(wagons));
+            } else if (newLogLength == oldLogLength) {
                 equalLength++;
-            }
-            else {
+            } else {
                 System.out.println(Arrays.deepToString(wagons));
             }
 

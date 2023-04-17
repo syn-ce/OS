@@ -41,6 +41,12 @@ public class TrainStation {
         return shunter.getLogSize();
     }
 
+    public int moveOld2() {
+        shunter = new Shunter(parkingRail, switchingRail, trainRail);
+        shunter.shunt2equal();
+        if (print) System.out.println("Log size = " + shunter.getLogSize());
+        return shunter.getLogSize();
+    }
     private int[] integerToIntArray(Integer[] ints) {
         int[] arr = new int[ints.length];
         for (int i = 0; i < ints.length; i++){
