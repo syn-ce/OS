@@ -52,7 +52,7 @@ public class Main {
         long totalOldSum = 0;
         int totalTests = nrOfIterations * nrOfRuns;
         for (int i = 0; i < nrOfIterations; i++) {
-            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 7, 7);
+            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 30, 30);
             totalOldSum += res[0];
             totalNewSum += res[1];
             totalWon += res[2];
@@ -88,7 +88,7 @@ public class Main {
 
             if (newLogLength < oldLogLength) {
                 newWasSmaller++;
-                System.out.println("New beat old here: " + Arrays.toString(wagons));
+//                System.out.println("New beat old here: " + Arrays.toString(wagons));
             } else if (newLogLength == oldLogLength) {
                 equalLength++;
             } else {

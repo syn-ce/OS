@@ -1,9 +1,18 @@
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Graph {
 
     private Set<Node> nodes = new HashSet<>();
+
+    public Graph() {
+
+    }
+
+    public void addNodes(Node[] nodes) {
+        this.nodes.addAll(Arrays.asList(nodes));
+    }
 
     public void addNode(Node nodeA) {
         nodes.add(nodeA);

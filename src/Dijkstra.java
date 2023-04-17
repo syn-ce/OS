@@ -4,8 +4,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class Dijkstra {
-    public static void calculateMinimumDistance(Node evaluationNode,
-                                                 Integer edgeWeigh, Node sourceNode) {
+
+    public Dijkstra() {
+
+    }
+
+    private void calculateMinimumDistance(Node evaluationNode, Integer edgeWeigh, Node sourceNode) {
         Integer sourceDistance = sourceNode.getDistance();
         if (sourceDistance + edgeWeigh < evaluationNode.getDistance()) {
             evaluationNode.setDistance(sourceDistance + edgeWeigh);
@@ -15,7 +19,7 @@ public class Dijkstra {
         }
     }
 
-    public static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
+    private Node getLowestDistanceNode(Set<Node> unsettledNodes) {
         Node lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
         for (Node node : unsettledNodes) {
@@ -28,7 +32,7 @@ public class Dijkstra {
         return lowestDistanceNode;
     }
 
-    public static Graph calculateShortestPathFromSource(Graph graph, Node source) {
+    public void calculateShortestPathFromSource(Node source) {
         source.setDistance(0);
 
         Set<Node> settledNodes = new HashSet<>();
@@ -49,6 +53,5 @@ public class Dijkstra {
             }
             settledNodes.add(currentNode);
         }
-        return graph;
     }
 }

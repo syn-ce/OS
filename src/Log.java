@@ -59,12 +59,12 @@ public class Log {
      * are ignored. If there are too few, the last columns remain empty.
      * @param entries
      */
-    public void addAction(Object... entries) {
+    public void addAction(String... entries) {
         String[] action = new String[entries.length + 1];
         action[0] = Integer.toString(actionId++);
         for (int i = 0; i < entries.length; i++) {
-            Object entry = entries[i];
-            action[i + 1] = String.valueOf(entry);
+            String entry = entries[i];
+            action[i + 1] = entry;
         }
         updateColumnLengths(action);
         actions.add(action);
