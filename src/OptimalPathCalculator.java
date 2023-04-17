@@ -10,25 +10,31 @@ public class OptimalPathCalculator {
         // initialise different wagons-values unique ascending
         differentWagonValues = getUniqueWagonValuesAscending(wagonNumbers);
 
+
         // construct cost-arrays
         int[][] C_L_arrays = getC_Li_arrays(wagonNumbers);
         int[][] C_R_arrays = getC_Ri_arrays(wagonNumbers);
 
-        // initialise lp- and rp-nodes for every unique wagon-nr
-        Node[] LPNodes = initialiseNodes("LP");
-        Node[] RPNodes = initialiseNodes("RP");
+//        // initialise lp- and rp-nodes for every unique wagon-nr
+//        Node[] LPNodes = initialiseNodes("LP");
+//        Node[] RPNodes = initialiseNodes("RP");
+//
+//        // add edges between nodes
+//        addEdges(LPNodes, RPNodes, C_L_arrays, C_R_arrays);
+//
+//        // get starting node -> will always have to start at LP1
+//        Node LP1 = LPNodes[0];
+//        // calculate minimum distance from LP1 to all nodes using Dijkstra's algorithm
+//        (new Dijkstra()).calculateShortestPathFromSource(LP1);
 
-        // add edges between nodes
-        addEdges(LPNodes, RPNodes, C_L_arrays, C_R_arrays);
-
-        // get starting node -> will always have to start at LP1
-        Node LP1 = LPNodes[0];
-        // calculate minimum distance from LP1 to all nodes using Dijkstra's algorithm
-        (new Dijkstra()).calculateShortestPathFromSource(LP1);
+        CustomGraph g = new CustomGraph(wagons, differentWagonValues, C_L_arrays, C_R_arrays);
 
         // get the distances of the last RP and LP node to LP1
-        Node lastLPNode = LPNodes[differentWagonValues.length - 1];
-        Node lastRPNode = RPNodes[differentWagonValues.length - 1];
+//        Node lastLPNode = LPNodes[differentWagonValues.length - 1];
+//        Node lastRPNode = RPNodes[differentWagonValues.length - 1];
+
+        Node lastLPNode = g.getNodeByLayer("LP", g.getNrOfLayers()-1);
+        Node lastRPNode = g.getNodeByLayer("RP", g.getNrOfLayers()-1);
 
         if (lastLPNode.getDistance() <= lastRPNode.getDistance()) {    // for now takes lastLPNode if they are of equal length
             optimalPath = lastLPNode.getShortestPath().stream().map(Node::getName).toArray(String[]::new);

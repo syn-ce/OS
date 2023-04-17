@@ -52,7 +52,7 @@ public class Main {
         long totalOldSum = 0;
         int totalTests = nrOfIterations * nrOfRuns;
         for (int i = 0; i < nrOfIterations; i++) {
-            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 30, 30);
+            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 100, 100);
             totalOldSum += res[0];
             totalNewSum += res[1];
             totalWon += res[2];
@@ -73,6 +73,7 @@ public class Main {
         int totalNewSum = 0;
         int newWasSmaller = 0;
         int equalLength = 0;
+        double smallestRatio = 1;
         for (int i = 0; i < nrOfRuns; i++) {
 
             Integer[] wagons = new Integer[nrOfWagons];
@@ -94,7 +95,9 @@ public class Main {
             } else {
                 System.out.println(Arrays.deepToString(wagons));
             }
-
+            if ((double) newLogLength / oldLogLength < smallestRatio) {
+                smallestRatio = (double) newLogLength / oldLogLength;
+            }
             totalOldSum += oldLogLength;
             totalNewSum += newLogLength;
         }
@@ -106,6 +109,7 @@ public class Main {
         System.out.println("Draw in " + equalLength + "/" + nrOfRuns);
         System.out.println("Total: " + (newWasSmaller + equalLength) + "/" + nrOfRuns);
         System.out.println("Lost: " + (nrOfRuns - newWasSmaller - equalLength));
+        System.out.println("Smallest ratio = " + smallestRatio);
         return new int[]{totalOldSum, totalNewSum, newWasSmaller, equalLength};
     }
 }
