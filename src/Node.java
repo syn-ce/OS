@@ -1,5 +1,8 @@
 import java.util.*;
 
+/**
+ * A Node is connected to its successors via a weighted edge.
+ */
 public class Node {
 
     private String name;
@@ -8,10 +11,10 @@ public class Node {
 
     private Integer distance = Integer.MAX_VALUE;
 
-    Map<Node, Integer> adjacentNodes = new HashMap<>();
+    private Map<Node, Integer> successors = new HashMap<>();
 
-    public void addDestination(Node destination, int distance) {
-        adjacentNodes.put(destination, distance);
+    public void addSuccessor(Node destination, int distance) {
+        successors.put(destination, distance);
     }
 
     public Node(String name) {
@@ -33,21 +36,15 @@ public class Node {
     public List<Node> getShortestPath() {
         return shortestPath;
     }
-
-    public Map<Node, Integer> getAdjacentNodes() {
-        return adjacentNodes;
+    public String[] getShortestPathStrings() {
+        return shortestPath.stream().map(Node::getName).toArray(String[]::new);
     }
 
-    public String getAdjacentNodesString() {
-        StringJoiner sj = new StringJoiner(", ");
-        for (Map.Entry<Node, Integer> aN : adjacentNodes.entrySet()) {
-            sj.add(aN.getKey().getName() + " (" + aN.getValue() + ")");
-        }
-        return sj.toString();
+    public Map<Node, Integer> getSuccessors() {
+        return successors;
     }
 
     public String getName() {
         return name;
     }
-    // getters and setters
 }

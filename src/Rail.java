@@ -2,11 +2,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 // ALL WAGONS MUST HAVE POSITIVE NUMBERS
+
+/**
+ * A Rail is
+ */
 public class Rail {
     private final String name;
 
     private final Stack<Integer> wagons;
 
+    /**
+     * Constructs a new Rail with the specified name and a Stack representing the wagon values in their correct
+     * ordering. The top of the Stack will be interpreted as the upfront-wagon, meaning the wagon which can be accessed.
+     * @param name Name of the Rail. Used in the log.
+     * @param wagons Stack of wagons in correct order. Top of Stack is the side of the Rail from which wagon can be accessed.
+     */
     public Rail(String name, Stack<Integer> wagons) {
         this.name = name;
         this.wagons = wagons;
@@ -17,6 +27,10 @@ public class Rail {
         this.wagons = new Stack<>();
     }
 
+    /**
+     * Removes the upfront wagon of the Rail.
+     * @return Wagon which has been removed.
+     */
     public Integer removeWagon() {
         if (wagons.isEmpty()) {
             return null;
@@ -24,8 +38,12 @@ public class Rail {
         return wagons.pop();
     }
 
-    public void addWagon(int waggonNr) {
-        wagons.add(waggonNr);
+    /**
+     * Adds a wagon to the Rail.
+     * @param wagonValue Value of wagon to be added.
+     */
+    public void addWagon(int wagonValue) {
+        wagons.add(wagonValue);
     }
 
     /**
@@ -41,13 +59,17 @@ public class Rail {
 
     /**
      *
-     * @return String-representation of the wagons on the rail. Note that the top of the wagons-stack represents the back of the train.
+     * @return String-representation of the wagons on the rail. The top of the wagons-stack represents the last wagon on the Rail.
      */
     public String getWagonsString() {
         String s = wagons.toString();
         return s.substring(1, s.length() - 1).replace(",", "");
     }
 
+    /**
+     *
+     * @return String-representation of the wagons on the rail in backwards order.
+     */
     public String getReverseWagonString() {
         Stack<Integer> temp = (Stack<Integer>) wagons.clone();
         Collections.reverse(temp);
@@ -92,6 +114,12 @@ public class Rail {
     }
 
     // TODO: can cause exception, this might be a problem depending on how it's called
+
+    /**
+     * Getter for the value of the wagon positioned at pos.
+     * @param pos Position of the wagon in the Stack of the Rail.
+     * @return Value of wagon at pos.
+     */
     public int getWagonValue(int pos) {
         if (pos >= wagons.size()) {
             return -1;

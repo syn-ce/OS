@@ -1,73 +1,48 @@
 import java.util.*;
 
+/**
+ * The OptimalPathCalculator calculates the optimal path to be taken when moving the wagon values from the parking Rail
+ * to the train Rail. The OptimalPathCalculator will assume that initially all wagons are parked on the parking Rail.
+ * The optimal path is calculated by constructing a graph related to the problem and finding the shortest path between
+ * specific nodes.
+ */
 public class OptimalPathCalculator {
     private final int[] differentWagonValues;
     private final int[] wagons;
     private final String[] optimalPath;
 
+    /**
+     * Constructs a new OptimalPathCalculator and calculates the optimal path using a graph and Dijkstra's algorithm.
+     * @param wagonNumbers
+     */
     public OptimalPathCalculator(int[] wagonNumbers) {
-        wagons = wagonNumbers;
+        wagons = wagonNumbers.clone();  // TODO: clone probably not necessary here, but check where it is
         // initialise different wagons-values unique ascending
         differentWagonValues = getUniqueWagonValuesAscending(wagonNumbers);
-
 
         // construct cost-arrays
         int[][] C_L_arrays = getC_Li_arrays(wagonNumbers);
         int[][] C_R_arrays = getC_Ri_arrays(wagonNumbers);
 
-//        // initialise lp- and rp-nodes for every unique wagon-nr
-//        Node[] LPNodes = initialiseNodes("LP");
-//        Node[] RPNodes = initialiseNodes("RP");
-//
-//        // add edges between nodes
-//        addEdges(LPNodes, RPNodes, C_L_arrays, C_R_arrays);
-//
-//        // get starting node -> will always have to start at LP1
-//        Node LP1 = LPNodes[0];
-//        // calculate minimum distance from LP1 to all nodes using Dijkstra's algorithm
-//        (new Dijkstra()).calculateShortestPathFromSource(LP1);
-
+        // construct graph for problem and solve using Dijkstra
         CustomGraph g = new CustomGraph(wagons, differentWagonValues, C_L_arrays, C_R_arrays);
 
-        // get the distances of the last RP and LP node to LP1
-//        Node lastLPNode = LPNodes[differentWagonValues.length - 1];
-//        Node lastRPNode = RPNodes[differentWagonValues.length - 1];
-
+        // get the distances of the last RP and LP node to LP1 (the starting node)
         Node lastLPNode = g.getNodeByLayer("LP", g.getNrOfLayers()-1);
         Node lastRPNode = g.getNodeByLayer("RP", g.getNrOfLayers()-1);
 
         if (lastLPNode.getDistance() <= lastRPNode.getDistance()) {    // for now takes lastLPNode if they are of equal length
-            optimalPath = lastLPNode.getShortestPath().stream().map(Node::getName).toArray(String[]::new);
+            optimalPath = lastLPNode.getShortestPathStrings();
         } else {
-            optimalPath = lastRPNode.getShortestPath().stream().map(Node::getName).toArray(String[]::new);
+            optimalPath = lastRPNode.getShortestPathStrings();
         }
     }
 
-    private void addEdges(Node[] LPNodes, Node[] RPNodes, int[][] C_L_arrays, int[][] C_R_arrays) {
-        for (int i = 1; i < differentWagonValues.length; i++) { // take care when indexing this
-
-            int firstPosOfCurrentValue = getFirstPos(i - 1);
-            int lastPosOfCurrentValue = getLastPos(i - 1);
-            LPNodes[i - 1].addDestination(LPNodes[i], C_L_arrays[i][lastPosOfCurrentValue]);  // when starting from LP on this layer, the pointer will end up at the rightmost position
-            LPNodes[i - 1].addDestination(RPNodes[i], C_R_arrays[i][lastPosOfCurrentValue]);
-
-            RPNodes[i - 1].addDestination(LPNodes[i], C_L_arrays[i][firstPosOfCurrentValue]); // when starting from RP on this layer, the pointer will end up at the leftmost position of that value
-            RPNodes[i - 1].addDestination(RPNodes[i], C_R_arrays[i][firstPosOfCurrentValue]);
-
-            // because of the way in which the cost-arrays are constructed, the "lack of care" for adjusting the indices here should be alright
-            // i.e. not adjusting for the fact that actually, the original last index of the current value does not have a cost on the next layer anymore, because the value of that index was removed in the previous iteration
-        }
-    }
-
-    private Node[] initialiseNodes(String type) {
-        Node[] RPNodes = new Node[differentWagonValues.length];
-        for (int i = 0; i < differentWagonValues.length; i++) {
-            Node RP = new Node(type + differentWagonValues[i]);
-            RPNodes[i] = RP;
-        }
-        return RPNodes;
-    }
-
+    /**
+     * Returns an Array with all values present in wagonNumbers except for the duplicates, in ascending order.
+     * @param wagonNumbers Array out of which the unique values are to be taken.
+     * @return Array of all unique values present in wagonNumbers, in ascending order.
+     */
     private int[] getUniqueWagonValuesAscending(int[] wagonNumbers) {
         Set<Integer> helper = new HashSet<>();
         for (int wagon : wagonNumbers) {
@@ -82,6 +57,13 @@ public class OptimalPathCalculator {
         return optimalPath;
     }
 
+    /**
+     * Gets the index of the first occurrence of an int in an Array of ints.
+     * @param arr Array in which to look for the value.
+     * @param z Value to find the first occurrence of.
+     * @return Index of the first occurrence of the value in the array.
+     * @throws RuntimeException If the value is not present in the array.
+     */
     public static int getFirstOccurrence(int[] arr, int z) {
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == z) {
@@ -91,6 +73,13 @@ public class OptimalPathCalculator {
         throw new RuntimeException("The array does not contain the number.");
     }
 
+    /**
+     * Gets the index of the last occurrence of an int in an Array of ints.
+     * @param arr Array in which to look for the value.
+     * @param z Value to find the last occurrence of.
+     * @return Index of the last occurrence of the value in the array.
+     * @throws RuntimeException If the value is not present in the array.
+     */
     public static int getLastOccurrence(int[] arr, int z) {
         for (int i = arr.length - 1; i > -1; i--) {
             if (arr[i] == z) {
@@ -157,13 +146,4 @@ public class OptimalPathCalculator {
         }
         return C_Rz;
     }
-
-    private int getLastPos(int i) {
-        return getLastOccurrence(wagons, differentWagonValues[i]);
-    }
-
-    private int getFirstPos(int i) {
-        return getFirstOccurrence(wagons, differentWagonValues[i]);
-    }
-
 }

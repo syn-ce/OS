@@ -14,6 +14,11 @@ public class TrainStation {
     private final Rail trainRail;
     private final int[] wagonValues;
     private Shunter shunter;
+
+    /**
+     * Constructs a new TrainStation with the specified wagon values. All wagon values will be
+     * @param ints The values of the wagons in correct order, with the left wagon being the first wagon.
+     */
     public TrainStation(Integer... ints) {
         parkingRail = new Rail("parkingRail", listToStack(ints));
         switchingRail = new Rail("switchingRail", new Stack<>());
@@ -38,20 +43,43 @@ public class TrainStation {
         shunter.shunt2equal();
         return shunter.getLogSize();
     }
-    private int[] integerToIntArray(Integer[] ints) {
-        int[] arr = new int[ints.length];
-        for (int i = 0; i < ints.length; i++){
-            arr[i] = ints[i];
-        }
-        return arr;
+
+    public int moveOld3() {
+        shunter = new Shunter(parkingRail, switchingRail, trainRail);
+        shunter.shunt3();
+        return shunter.getLogSize();
     }
+
+    /**
+     * Converts an Array of Integers to an Array of arr.
+     * @param arr Integer-Array to be converted.
+     * @return int-Array with values of arr.
+     */
+    private int[] integerToIntArray(Integer[] arr) {
+        int[] ints = new int[arr.length];
+        for (int i = 0; i < arr.length; i++){
+            ints[i] = arr[i];
+        }
+        return ints;
+    }
+
+    /**
+     * Calculates the optimal path to be taken when moving the wagons.
+     * @return An Array of Strings containing the names of the nodes which are traversed in the optimal path
+     */
 
     private String[] getOptimalPath() {
         OptimalPathCalculator g = new OptimalPathCalculator(wagonValues.clone());
         return g.getOptimalPath();
     }
 
+    /**
+     * Converts an array of Integers to a Stack.
+     * @param arr
+     * @return
+     */
     private Stack<Integer> listToStack(Integer[] arr) {
+        // TODO: why reverse??
         List<Integer> wagons = Arrays.asList(arr.clone());
         Collections.reverse(wagons);
         Stack<Integer> aS = new Stack<>();

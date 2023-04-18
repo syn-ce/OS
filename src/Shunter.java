@@ -32,6 +32,11 @@ public class Shunter {
         Arrays.sort(uniqueWagonValuesAscending);
     }
 
+    /**
+     * Moves a wagon from Rail from to Rail to.
+     * @param from Rail from which to move the wagon from.
+     * @param to Rail to which to move the wagon to.
+     */
     private void moveWagon(Rail from, Rail to) {
         int waggon = from.removeWagon();
         to.addWagon(waggon);
@@ -44,7 +49,17 @@ public class Shunter {
     // [LP3, LP4, RP6, RP8, RP9, LP14, LP16] (note that in every case, there will be another value; in this case, there
     // might be wagons with value 18 - however, once we've removed the second-to-last "layer" of nodes (here 16), it
     // won't matter where we start to remove the last one, it will always be optimal
-    public void shuntNew(String[] nodeList) {
+
+    /**
+     * Moves all wagons onto the train-Rail. The Shunter is able to make its own decisions, meaning that it will figure
+     * out the Rail on which the wagons with the next number are currently standing. If all of these wagons are parked
+     * on the same Rail, the Shunter will move all of them onto the train-Rail with as few moves as possible. If the
+     * wagons with the next value happen to be standing on both rails, the Shunter will consult the Array of Strings
+     * representing the names of the nodes of the optimal path, and make its decision based on that information.
+     * @param optimalPathNodeNames Array of Strings containing the names of the nodes of the optimal path in correct
+     *                             order.
+     */
+    public void shuntNew(String[] optimalPathNodeNames) {
         for (int i = 0; i < uniqueWagonValuesAscending.length; i++) {
             int wagonNr = uniqueWagonValuesAscending[i];
             // get positions of that wagonNr on both rails
@@ -61,8 +76,8 @@ public class Shunter {
                 String nodeName = "L";  // TODO: fix indexing; and clear this up -> note that for the very last removal,
                 // TODO: the starting point does not matter, since there is only one value left -> removal in any order
                 //  will suffice for optimal solution (so this is not that important, but still, it's not very nice-looking, is it?)
-                if (i < nodeList.length) {
-                    nodeName = nodeList[i];
+                if (i < optimalPathNodeNames.length) {
+                    nodeName = optimalPathNodeNames[i];
                 }
                 if (nodeName.charAt(0) == 'L') {    // look to left (switchingRail) first
                     moveAllNrsFromTo(wagonNr, switchingRail, parkingRail);
@@ -120,8 +135,85 @@ public class Shunter {
         if (print) log.print();
     }
 
+    public void shunt3() {
+        // if the next wagonNr occurs multiple times, it should be determined from which rail the wagonNr should be
+        // retrieved first (completely, since moving it back before the last wagonNr from that Rail has been retrieved
+        // makes no sense / will always result in more movement than necessary)
+
+        // to determine the "cost" of both options (first getting wagonNr from Rail1 or Rail2), add the number of wagons
+        // which have to be moved from Rail1*2 + number of wagons which have to be moved from Rail2
+        // -> 2*nrOfWagonsMovedInParkingRail + nrOfWagonsMovedInSwitchingRail >=<? nrOfWagonsMovedInParkingRail + 2*nrOfWagonsMovedInSwitchingRail
+        for (int j = 0; j < wagonValues.length; j++) {
+            int wagonNr = wagonValues[j];
+            // go through the parking rail and find all instances of wagonNr
+            int nrOfWagonsToMoveOnParkingRail = 0;
+            int costForNextWagon = 0;   // does NOT include the wagonNr-wagons themselves
+
+            for (int i = 0; i < parkingRail.getNrOfWagons(); i++) {
+                if (parkingRail.getWagonValue(i) == wagonNr) {
+                    nrOfWagonsToMoveOnParkingRail += costForNextWagon;
+                    costForNextWagon = 0;
+                } else {
+                    costForNextWagon++;
+                }
+            }
+
+            int nrOfWagonsToMoveOnSwitchingRail = 0;
+            costForNextWagon = 0;   // does NOT include the wagonNr-wagons themselves
+
+            for (int i = 0; i < switchingRail.getNrOfWagons(); i++) {
+                if (switchingRail.getWagonValue(i) == wagonNr) {
+                    nrOfWagonsToMoveOnSwitchingRail += costForNextWagon;
+                    costForNextWagon = 0;
+                } else {
+                    costForNextWagon++;
+                }
+            }
+
+
+            if (parkingRail.getSmallestPosOfNr(wagonNr) == -1) {
+                nrOfWagonsToMoveOnParkingRail = Integer.MAX_VALUE;
+            }
+            if (switchingRail.getSmallestPosOfNr(wagonNr) == -1) {
+                nrOfWagonsToMoveOnSwitchingRail = Integer.MAX_VALUE;
+            }
+//            System.out.println(nrOfWagonsToMoveOnParkingRail);
+//            System.out.println(nrOfWagonsToMoveOnSwitchingRail);
+
+            if (nrOfWagonsToMoveOnParkingRail < nrOfWagonsToMoveOnSwitchingRail) {
+                while (parkingRail.getSmallestPosOfNr(wagonNr) != -1) { // move all wagonNr-wagons from parkingRail to trainRail
+                    while (parkingRail.getNextWagon() != wagonNr) {
+                        moveWagon(parkingRail, switchingRail);
+                    }
+                    moveWagon(parkingRail, trainRail);
+                }
+                while (switchingRail.getSmallestPosOfNr(wagonNr) != -1) { // move all wagonNr-wagons from switchingRail to trainRail
+                    while (switchingRail.getNextWagon() != wagonNr) {
+                        moveWagon(switchingRail, parkingRail);
+                    }
+                    moveWagon(switchingRail, trainRail);
+                }
+            } else {
+                while (switchingRail.getSmallestPosOfNr(wagonNr) != -1) { // move all wagonNr-wagons from switchingRail to trainRail
+                    while (switchingRail.getNextWagon() != wagonNr) {
+                        moveWagon(switchingRail, parkingRail);
+                    }
+                    moveWagon(switchingRail, trainRail);
+                }
+                while (parkingRail.getSmallestPosOfNr(wagonNr) != -1) { // move all wagonNr-wagons from parkingRail to trainRail
+                    while (parkingRail.getNextWagon() != wagonNr) {
+                        moveWagon(parkingRail, switchingRail);
+                    }
+                    moveWagon(parkingRail, trainRail);
+                }
+            }
+        }
+//        log.print();
+    }
+
+
     /**
-     * This function will move all wagons from the from-Rail to the to-Rail until there are no more wagons with the
+     * Will move all wagons from the from-Rail to the to-Rail until there are no more wagons with the
      * specified value in the from-Rail. All wagons with value == nr will be moved from the from-Rail onto the
      * train-Rail instead.
      *

@@ -19,14 +19,6 @@ public class Log {
      */
     private int spaceBetweenColumns = 3;
 
-    public Log(String[] columns) {
-        actions.add(columns);
-        columnLengths = new Integer[columns.length];      // + 1 since the action-id will automatically be added
-        Arrays.fill(columnLengths, 0);
-        updateColumnLengths(columns);
-        alignRight = new boolean[columns.length];
-    }
-
     /**
      * Constructs a new log with the specified column-headers and aligns all columns i for which alignRight[i] == true
      * to the right, all others to the left.
@@ -42,18 +34,7 @@ public class Log {
         this.alignRight = alignRight;
     }
 
-    public Log(String[] columns, int spaceBetweenColumns) {
-        this.spaceBetweenColumns = spaceBetweenColumns;
-        actions.add(columns);
-        columnLengths = new Integer[columns.length];
-        Arrays.fill(columnLengths, 0);
-        updateColumnLengths(columns);
-        alignRight = new boolean[columns.length];
-    }
-
-    //    public void addAktion(int waggonNr, String vonGleis, String nachGleis, int[] abstellReihung, int[] rangierReihung, int[] zugReihung) {
-
-    // TODO: ckeck this (different lengths)
+    // TODO: check this (different lengths)
     /**
      * Adds an action to the log using the specified entries. If there are more entries than columns, the last entries
      * are ignored. If there are too few, the last columns remain empty.
