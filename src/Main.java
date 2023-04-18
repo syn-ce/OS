@@ -28,7 +28,7 @@ public class Main {
 
 //        List<int[]> won = new ArrayList<>();
 
-        multipleRdmTesting(10, 50);
+//        multipleRdmTesting(10, 50);
 
         TrainStation ts7 = new TrainStation(2, 3, 1, 4, 2);
         TrainStation ts71 = new TrainStation(2, 3, 1, 4, 2);

@@ -1,7 +1,13 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+/**
+ * This class is used for documenting the actions of the Shunter when moving the wagons from the parking-Rail to the
+ * train-Rail in correct order.
+ */
 public class Log {
     private List<String[]> actions = new ArrayList<>();
     ;
@@ -14,31 +20,32 @@ public class Log {
      * Stores for each column whether that column should be aligned to the right or not (default is left). Text will be aligned left, numeric columns right.
      */
     private boolean[] alignRight;
-    /**
-     * Specifies how much space there should be after each column.
-     */
-    private int spaceBetweenColumns = 3;
 
     /**
-     * Constructs a new log with the specified column-headers and aligns all columns i for which alignRight[i] == true
-     * to the right, all others to the left.
-     * @param columns Column-headers of all columns.
+     * Constructs a new log with the specified column-headers (plus an extra column for the IDs of the actions) and
+     * aligns all columns i for which alignRight[i] == true (as well as the action-ID-column) to the right, all others
+     * to the left.
+     *
+     * @param columns    Column-headers of the columns excluding the action-id-column.
      * @param alignRight Array of booleans where alignRight[i] specifies whether columns[i] should be aligned to the
-     *                   right (true) or the left (false).
+     *                   right (true) or the left (false). Has to be of the same length as columns.
      */
     public Log(String[] columns, boolean[] alignRight) {
-        actions.add(columns);
-        columnLengths = new Integer[columns.length];
+        String[] headers = Stream.concat(Arrays.stream((new String[]{"Aktion"})), Arrays.stream(columns)).toArray(String[]::new);
+        actions.add(headers);
+        columnLengths = new Integer[columns.length + 1];
         Arrays.fill(columnLengths, 1);
-        updateColumnLengths(columns);
-        this.alignRight = alignRight;
+        updateColumnLengths(headers);
+        this.alignRight = new boolean[columns.length + 1];
+        this.alignRight[0] = true;
+        System.arraycopy(alignRight, 0, this.alignRight, 1, columns.length);
     }
 
-    // TODO: check this (different lengths)
     /**
-     * Adds an action to the log using the specified entries. If there are more entries than columns, the last entries
-     * are ignored. If there are too few, the last columns remain empty.
-     * @param entries
+     * Adds an action to the log using the specified entries. The number of entries should equal the number of columns
+     * -1, with the first column being reserved for the id of the action.
+     *
+     * @param entries Entries for the protocol line, one entry for every column except the first (actionID)
      */
     public void addAction(String... entries) {
         String[] action = new String[entries.length + 1];
@@ -52,13 +59,13 @@ public class Log {
     }
 
     /**
-     * Checks if the length of any entry of the action (including the additional whitespace) exceeds the length of its
+     * Checks if the length of any entry of the action exceeds the length of its
      * column. If so, updates the length of the column accordingly.
      *
      * @param action An array of Strings containing an entry for every column of the protokoll.
      */
     private void updateColumnLengths(String[] action) {
-        for (int i = 0; i < action.length; i++) {
+        for (int i = 0; i < columnLengths.length; i++) {
             if (action[i].length() > columnLengths[i]) {
                 columnLengths[i] = action[i].length();
             }
@@ -67,7 +74,8 @@ public class Log {
 
     /**
      * Multiplies the specified String the specified number of times and returns the new String.
-     * @param s String to be multiplied.
+     *
+     * @param s           String to be multiplied.
      * @param repetitions Number of repetitions of the String.
      * @return Multiplied String.
      */
@@ -77,11 +85,12 @@ public class Log {
 
     /**
      * Constructs a new template protocol line.
+     *
      * @return String template protocol line.
      */
     private String constructProtocolLine() {
         StringBuilder s = new StringBuilder();
-
+        int spaceBetweenColumns = 3;
         String spaceBetween = multiplyString(" ", spaceBetweenColumns);
         for (int i = 0; i < columnLengths.length; i++) {
             s.append("%%").append(!alignRight[i] ? "-" : "").append("%ds").append(spaceBetween);
@@ -106,9 +115,10 @@ public class Log {
 
     /**
      * Getter for the size of the protocol, i.e. the number of actions added to the protocol so far.
+     *
      * @return The number of actions recorded so far.
      */
     public int getSize() {
-        return actionId-1;
+        return actionId - 1;
     }
 }

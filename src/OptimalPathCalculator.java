@@ -15,10 +15,10 @@ public class OptimalPathCalculator {
      * Constructs a new OptimalPathCalculator and calculates the optimal path using a graph and Dijkstra's algorithm.
      * @param wagonNumbers
      */
-    public OptimalPathCalculator(int[] wagonNumbers) {
+    public OptimalPathCalculator(int[] wagonNumbers, int[] uniqueWagonValuesAscending) {
         wagons = wagonNumbers.clone();  // TODO: clone probably not necessary here, but check where it is
         // initialise different wagons-values unique ascending
-        differentWagonValues = getUniqueWagonValuesAscending(wagonNumbers);
+        differentWagonValues = uniqueWagonValuesAscending;
 
         // construct cost-arrays
         int[][] C_L_arrays = getC_Li_arrays(wagonNumbers);
@@ -37,22 +37,7 @@ public class OptimalPathCalculator {
             optimalPath = lastRPNode.getShortestPathStrings();
         }
     }
-
-    /**
-     * Returns an Array with all values present in wagonNumbers except for the duplicates, in ascending order.
-     * @param wagonNumbers Array out of which the unique values are to be taken.
-     * @return Array of all unique values present in wagonNumbers, in ascending order.
-     */
-    private int[] getUniqueWagonValuesAscending(int[] wagonNumbers) {
-        Set<Integer> helper = new HashSet<>();
-        for (int wagon : wagonNumbers) {
-            helper.add(wagon);
-        }
-        int[] temp = helper.stream().mapToInt(Number::intValue).toArray();
-        Arrays.sort(temp);
-        return temp;
-    }
-
+    
     public String[] getOptimalPath() {
         return optimalPath;
     }

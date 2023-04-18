@@ -49,8 +49,8 @@ public class Rail {
     /**
      * @return int-array as copy of the wagon-values on the rail.
      */
-    public Integer[] getWagonValues() {
-        Integer[] copy = new Integer[wagons.size()];
+    public int[] getWagonValues() {
+        int[] copy = new int[wagons.size()];
         for (int i = 0; i < wagons.size(); i++) {
             copy[i] = wagons.get(i);
         }
