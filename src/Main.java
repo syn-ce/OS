@@ -28,7 +28,7 @@ public class Main {
 
 //        List<int[]> won = new ArrayList<>();
 
-//        multipleRdmTesting(10, 50);
+        multipleRdmTesting(10, 50);
 
         TrainStation ts7 = new TrainStation(2, 3, 1, 4, 2);
         TrainStation ts71 = new TrainStation(2, 3, 1, 4, 2);
@@ -52,7 +52,7 @@ public class Main {
         long totalOldSum = 0;
         int totalTests = nrOfIterations * nrOfRuns;
         for (int i = 0; i < nrOfIterations; i++) {
-            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 256, 128);
+            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 100, 100);
             totalOldSum += res[0];
             totalNewSum += res[1];
             totalWon += res[2];

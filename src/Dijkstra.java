@@ -13,6 +13,35 @@ public class Dijkstra {
     }
 
     /**
+     * Calculates the shortest path from a source Node to all other Nodes connected to that Node and sets their
+     * distances accordingly.
+     * @param source Node from which to calculate the distance to all other Nodes.
+     */
+    public void calculateShortestPathsFromNode(RailGraph g, Node source) {
+        resetShortestPaths(g);
+        source.setDistance(0);
+
+        Set<Node> settledNodes = new HashSet<>();
+        Set<Node> unsettledNodes = new HashSet<>();
+
+        unsettledNodes.add(source);
+
+        while (unsettledNodes.size() != 0) {
+            Node currentNode = getLowestDistanceNode(unsettledNodes);
+            unsettledNodes.remove(currentNode);
+            for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getSuccessors().entrySet()) {
+                Node adjacentNode = adjacencyPair.getKey();
+                Integer edgeWeight = adjacencyPair.getValue();
+                if (!settledNodes.contains(adjacentNode)) {
+                    calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
+                    unsettledNodes.add(adjacentNode);
+                }
+            }
+            settledNodes.add(currentNode);
+        }
+    }
+
+    /**
      * Looks at the Node to evaluate and another Node connected to the first Node via an edge. If the first Nodes
      * distance can be shortened by going through the second Node and the specified edge, the first Node's shortest
      * distance and shortest path are updated accordingly.
@@ -50,30 +79,15 @@ public class Dijkstra {
     }
 
     /**
-     * Calculates the shortest path from a source Node to all other Nodes connected to that Node and sets their
-     * distances accordingly.
-     * @param source Node from which to calculate the distance to all other Nodes.
+     * Resets the shortest path as well as the distance of all nodes of the graph to the default values.
+     * This will prevent undesired behaviour and ambiguous distances of nodes when Dijkstra is called again on a
+     * different node of the same graph.
+     * @param g Graph containing all the nodes of which the distances shall be reset.
      */
-    public void calculateShortestPathsFromNode(Node source) {
-        source.setDistance(0);
-
-        Set<Node> settledNodes = new HashSet<>();
-        Set<Node> unsettledNodes = new HashSet<>();
-
-        unsettledNodes.add(source);
-
-        while (unsettledNodes.size() != 0) {
-            Node currentNode = getLowestDistanceNode(unsettledNodes);
-            unsettledNodes.remove(currentNode);
-            for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getSuccessors().entrySet()) {
-                Node adjacentNode = adjacencyPair.getKey();
-                Integer edgeWeight = adjacencyPair.getValue();
-                if (!settledNodes.contains(adjacentNode)) {
-                    calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
-                    unsettledNodes.add(adjacentNode);
-                }
-            }
-            settledNodes.add(currentNode);
+    private void resetShortestPaths(RailGraph g) {
+        for (Node n : g.getNodes()) {
+            n.setDistance(Integer.MAX_VALUE);
+            n.setShortestPath(new LinkedList<>());
         }
     }
 }

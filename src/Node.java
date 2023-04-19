@@ -13,12 +13,21 @@ public class Node {
 
     private Map<Node, Integer> successors = new HashMap<>();
 
-    public void addSuccessor(Node destination, int distance) {
-        successors.put(destination, distance);
-    }
-
+    /**
+     * Constructs a new Node with the specified name.
+     * @param name Name of the Node. Does not have to be unique.
+     */
     public Node(String name) {
         this.name = name;
+    }
+
+    /**
+     * Adds a successor-Node to this node. The edge from this node to the successor-Node will have the weight distance.
+     * @param successor New successor Node to this Node.
+     * @param distance Weight of the edge from this Node to the successor-Node.
+     */
+    public void addSuccessor(Node successor, int distance) {
+        successors.put(successor, distance);
     }
 
     public void setDistance(Integer d) {
@@ -36,7 +45,7 @@ public class Node {
     public List<Node> getShortestPath() {
         return shortestPath;
     }
-    public String[] getShortestPathStrings() {
+    public String[] getShortestPathNames() {
         return shortestPath.stream().map(Node::getName).toArray(String[]::new);
     }
 

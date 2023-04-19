@@ -5,15 +5,13 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * This class is used for documenting the actions of the Shunter when moving the wagons from the parking-Rail to the
- * train-Rail in correct order.
+ * This class is used by the Shunter for documenting its actions when moving the wagons from one Rail to another.
  */
 public class Log {
     private List<String[]> actions = new ArrayList<>();
-    ;
     private int actionId = 1;
     /**
-     * Stores the length of the longest entry of each column. Stored as Integers as it will be converted to Object[].
+     * Stores the length of the longest entry of each column. Stored as Integers as it will be converted to Object[] for String-formatting.
      */
     private Integer[] columnLengths;
     /**
@@ -23,7 +21,7 @@ public class Log {
 
     /**
      * Constructs a new log with the specified column-headers (plus an extra column for the IDs of the actions) and
-     * aligns all columns i for which alignRight[i] == true (as well as the action-ID-column) to the right, all others
+     * aligns all columns i for which alignRight[i] == true (as well as the ID-column) to the right, all others
      * to the left.
      *
      * @param columns    Column-headers of the columns excluding the action-id-column.
@@ -43,7 +41,7 @@ public class Log {
 
     /**
      * Adds an action to the log using the specified entries. The number of entries should equal the number of columns
-     * -1, with the first column being reserved for the id of the action.
+     * -1, with the first column being reserved for the ID of the action.
      *
      * @param entries Entries for the protocol line, one entry for every column except the first (actionID)
      */
@@ -62,7 +60,7 @@ public class Log {
      * Checks if the length of any entry of the action exceeds the length of its
      * column. If so, updates the length of the column accordingly.
      *
-     * @param action An array of Strings containing an entry for every column of the protokoll.
+     * @param action Array of Strings containing an entry for every column of the protokoll.
      */
     private void updateColumnLengths(String[] action) {
         for (int i = 0; i < columnLengths.length; i++) {
@@ -84,9 +82,10 @@ public class Log {
     }
 
     /**
-     * Constructs a new template protocol line.
+     * Constructs a new protocol line which can then be formatted for any action by simply calling
+     * String.format(line, action) and will have correct spacing.
      *
-     * @return String template protocol line.
+     * @return String template protocol line which can be String-formatted with any action out of the actions-List.
      */
     private String constructProtocolLine() {
         StringBuilder s = new StringBuilder();
@@ -101,14 +100,14 @@ public class Log {
     // TODO: implement way to check whether the protokoll has changed since the last time the protokoll has been printed; if not, just return the String previously constructed (should save some time)
 
     /**
-     * Prints the protocol into the console.
+     * Converts the log into readable format and prints it into the console.
      */
     public void print() {
         StringBuilder printableProtokoll = new StringBuilder();
         for (String[] action : actions) {
-            String s = constructProtocolLine();
-            s = String.format(s, (Object[]) action);
-            printableProtokoll.append(s);
+            String templateLine = constructProtocolLine();
+            String line = String.format(templateLine, (Object[]) action);
+            printableProtokoll.append(line);
         }
         System.out.println(printableProtokoll);
     }

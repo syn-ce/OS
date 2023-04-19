@@ -1,7 +1,8 @@
 import java.util.*;
 
 /**
- * This class will contain all the Rails of the station and give the optimal instructions to the Shunter.
+ * Contains all the Rails of the station and instructs the Shunter to move all wagons from the parkingRail to the
+ * trainRail.
  */
 
 public class TrainStation {
@@ -11,21 +12,28 @@ public class TrainStation {
     private final Rail trainRail;
     private final int[] wagonValues;
     private final int[] uniqueWagonValuesAscending;
+    private OptimalPathCalculator optimalPathCalculator;
     private Shunter shunter;
 
     /**
-     * Constructs a new TrainStation with the specified wagon values. All wagon values will be
+     * Constructs a new TrainStation with the specified wagon values. The wagon values represent the values of the
+     * wagons on the parkingRail from left to right, the leftmost wagon being the wagon which can be accessed.
      *
-     * @param ints The values of the wagons in correct order, with the left wagon being the first wagon.
+     * @param wagonValues The values of the wagons in correct order, with the left wagon being the accessible wagon.
      */
-    public TrainStation(Integer... ints) {
-        parkingRail = new Rail("parkingRail", listToStack(ints));
-        switchingRail = new Rail("switchingRail", new Stack<>());
-        trainRail = new Rail("trainRail", new Stack<>());
-        wagonValues = integerToIntArray(ints);
-        uniqueWagonValuesAscending = getUniqueWagonValuesAscending(wagonValues);
+    public TrainStation(Integer... wagonValues) {
+        parkingRail = new Rail("parkingRail", wagonValues);
+        switchingRail = new Rail("switchingRail");
+        trainRail = new Rail("trainRail");
+        this.wagonValues = integerToIntArray(wagonValues);
+        uniqueWagonValuesAscending = getUniqueWagonValuesAscending(this.wagonValues);
+        optimalPathCalculator = new OptimalPathCalculator(this.wagonValues, this.uniqueWagonValuesAscending);
     }
 
+    /**
+     * Instruct the Shunter to move the wagons from the parkingRail to the trainRail with as little moves as possible.
+     * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
+     */
     public int moveNew() {
         String[] optimalPath = getOptimalPath();
         shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
@@ -66,14 +74,14 @@ public class TrainStation {
     }
 
     /**
-     * Returns an Array with all values present in wagonNumbers except for the duplicates, in ascending order.
+     * Returns an Array with all values present in wagonValues except for the duplicates, in ascending order.
      *
-     * @param wagonNumbers Array out of which the unique values are to be taken.
-     * @return Array of all unique values present in wagonNumbers, in ascending order.
+     * @param wagonValues Array out of which the unique values are to be taken.
+     * @return Array of all unique values present in wagonValues, in ascending order.
      */
-    private int[] getUniqueWagonValuesAscending(int[] wagonNumbers) {
+    private int[] getUniqueWagonValuesAscending(int[] wagonValues) {
         Set<Integer> helper = new HashSet<>();
-        for (int wagon : wagonNumbers) {
+        for (int wagon : wagonValues) {
             helper.add(wagon);
         }
         int[] temp = helper.stream().mapToInt(Number::intValue).toArray();
@@ -84,26 +92,11 @@ public class TrainStation {
     /**
      * Calculates the optimal path to be taken when moving the wagons.
      *
-     * @return An Array of Strings containing the names of the nodes which are traversed in the optimal path
+     * @return An array of Strings containing the names of the nodes which are traversed in the optimal path
      */
 
     private String[] getOptimalPath() {
-        OptimalPathCalculator g = new OptimalPathCalculator(wagonValues.clone(), uniqueWagonValuesAscending);
-        return g.getOptimalPath();
+        return optimalPathCalculator.getOptimalPath();
     }
 
-    /**
-     * Converts an array of Integers to a Stack.
-     *
-     * @param arr
-     * @return
-     */
-    private Stack<Integer> listToStack(Integer[] arr) {
-        // TODO: why reverse??
-        List<Integer> wagons = Arrays.asList(arr.clone());
-        Collections.reverse(wagons);
-        Stack<Integer> aS = new Stack<>();
-        aS.addAll(wagons);
-        return aS;
-    }
 }
