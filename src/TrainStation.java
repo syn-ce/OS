@@ -1,10 +1,8 @@
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
- * This class will contain all the Rails of the station and give the optimal instructions to the Shunter.
+ * Contains all the Rails of the station and instructs the Shunter to move all wagons from the parkingRail to the
+ * trainRail.
  */
 
 public class TrainStation {
@@ -13,65 +11,92 @@ public class TrainStation {
     private final Rail switchingRail;
     private final Rail trainRail;
     private final int[] wagonValues;
+    private final int[] uniqueWagonValuesAscending;
+    private OptimalPathCalculator optimalPathCalculator;
     private Shunter shunter;
-    private boolean print = false;
-    public TrainStation(Integer... ints) {
-        // 12, 4, 19, 20, 3, 16, 4, 6, 9, 8
-        parkingRail = new Rail("parkingRail", listToStack(ints));
-        switchingRail = new Rail("switchingRail", new Stack<>());
-        trainRail = new Rail("trainRail", new Stack<>());
 
-        // when the shunter is moved above the optimal path, the optimal path changes and is not optimal anymore??
-        wagonValues = integerToIntArray(ints);
-        if (print) System.out.println("Before: " + Arrays.toString(wagonValues));
-
+    /**
+     * Constructs a new TrainStation with the specified wagon values. The wagon values represent the values of the
+     * wagons on the parkingRail from left to right, the leftmost wagon being the wagon which can be accessed.
+     *
+     * @param wagonValues The values of the wagons in correct order, with the left wagon being the accessible wagon.
+     */
+    public TrainStation(Integer... wagonValues) {
+        parkingRail = new Rail("parkingRail", wagonValues);
+        switchingRail = new Rail("switchingRail");
+        trainRail = new Rail("trainRail");
+        this.wagonValues = integerToIntArray(wagonValues);
+        uniqueWagonValuesAscending = getUniqueWagonValuesAscending(this.wagonValues);
+        optimalPathCalculator = new OptimalPathCalculator(this.wagonValues, this.uniqueWagonValuesAscending);
     }
 
+    /**
+     * Instruct the Shunter to move the wagons from the parkingRail to the trainRail with as little moves as possible.
+     * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
+     */
     public int moveNew() {
         String[] optimalPath = getOptimalPath();
-        if (print) System.out.println("optimal path = " + Arrays.toString(optimalPath));
-        shunter = new Shunter(parkingRail, switchingRail, trainRail);
+        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
         shunter.shuntNew(optimalPath);
         return shunter.getLogSize();
     }
+
     public int moveOld() {
-        shunter = new Shunter(parkingRail, switchingRail, trainRail);
+        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
         shunter.shunt2();
-        if (print) System.out.println("Log size = " + shunter.getLogSize());
         return shunter.getLogSize();
     }
 
     public int moveOld2() {
-        shunter = new Shunter(parkingRail, switchingRail, trainRail);
+        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
         shunter.shunt2equal();
-        if (print) System.out.println("Log size = " + shunter.getLogSize());
         return shunter.getLogSize();
     }
-    private int[] integerToIntArray(Integer[] ints) {
-        int[] arr = new int[ints.length];
-        for (int i = 0; i < ints.length; i++){
-            arr[i] = ints[i];
-        }
-        return arr;
+
+    public int moveOld3() {
+        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
+        shunter.shunt3();
+        return shunter.getLogSize();
     }
+
+    /**
+     * Converts an Array of Integers to an Array of arr.
+     *
+     * @param arr Integer-Array to be converted.
+     * @return int-Array with values of arr.
+     */
+    private int[] integerToIntArray(Integer[] arr) {
+        int[] ints = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            ints[i] = arr[i];
+        }
+        return ints;
+    }
+
+    /**
+     * Returns an Array with all values present in wagonValues except for the duplicates, in ascending order.
+     *
+     * @param wagonValues Array out of which the unique values are to be taken.
+     * @return Array of all unique values present in wagonValues, in ascending order.
+     */
+    private int[] getUniqueWagonValuesAscending(int[] wagonValues) {
+        Set<Integer> helper = new HashSet<>();
+        for (int wagon : wagonValues) {
+            helper.add(wagon);
+        }
+        int[] temp = helper.stream().mapToInt(Number::intValue).toArray();
+        Arrays.sort(temp);
+        return temp;
+    }
+
+    /**
+     * Calculates the optimal path to be taken when moving the wagons.
+     *
+     * @return An array of Strings containing the names of the nodes which are traversed in the optimal path
+     */
 
     private String[] getOptimalPath() {
-        if (print) System.out.println("wagonValues = " + Arrays.toString(wagonValues));
-        // TODO: the wagon values get messed up - figure out why.
-        DirectedAcyclicGraph g = new DirectedAcyclicGraph(wagonValues.clone());
-//        DirectedAcyclicGraph g = new DirectedAcyclicGraph(wagonValues.clone());
-//        DirectedAcyclicGraph g = new DirectedAcyclicGraph(wagonValues);
-        return g.getOptimalPath();
+        return optimalPathCalculator.getOptimalPath();
     }
 
-    private Stack<Integer> listToStack(Integer[] arr) { // TODO: figure out and fix this problem; this CHANGES ARR,
-        // TODO: this should DEFINITELY NOT HAPPEN
-        if (print) System.out.println(Arrays.toString(arr));
-        List<Integer> wagons = Arrays.asList(arr.clone());
-        Collections.reverse(wagons);
-        Stack<Integer> aS = new Stack<>();
-        aS.addAll(wagons);
-        if (print) System.out.println(Arrays.toString(arr));
-        return aS;
-    }
 }

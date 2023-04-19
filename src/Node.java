@@ -1,5 +1,8 @@
 import java.util.*;
 
+/**
+ * A Node is connected to its successors via a weighted edge.
+ */
 public class Node {
 
     private String name;
@@ -8,14 +11,23 @@ public class Node {
 
     private Integer distance = Integer.MAX_VALUE;
 
-    Map<Node, Integer> adjacentNodes = new HashMap<>();
+    private Map<Node, Integer> successors = new HashMap<>();
 
-    public void addDestination(Node destination, int distance) {
-        adjacentNodes.put(destination, distance);
-    }
-
+    /**
+     * Constructs a new Node with the specified name.
+     * @param name Name of the Node. Does not have to be unique.
+     */
     public Node(String name) {
         this.name = name;
+    }
+
+    /**
+     * Adds a successor-Node to this node. The edge from this node to the successor-Node will have the weight distance.
+     * @param successor New successor Node to this Node.
+     * @param distance Weight of the edge from this Node to the successor-Node.
+     */
+    public void addSuccessor(Node successor, int distance) {
+        successors.put(successor, distance);
     }
 
     public void setDistance(Integer d) {
@@ -33,21 +45,15 @@ public class Node {
     public List<Node> getShortestPath() {
         return shortestPath;
     }
-
-    public Map<Node, Integer> getAdjacentNodes() {
-        return adjacentNodes;
+    public String[] getShortestPathNames() {
+        return shortestPath.stream().map(Node::getName).toArray(String[]::new);
     }
 
-    public String getAdjacentNodesString() {
-        StringJoiner sj = new StringJoiner(", ");
-        for (Map.Entry<Node, Integer> aN : adjacentNodes.entrySet()) {
-            sj.add(aN.getKey().getName() + " (" + aN.getValue() + ")");
-        }
-        return sj.toString();
+    public Map<Node, Integer> getSuccessors() {
+        return successors;
     }
 
     public String getName() {
         return name;
     }
-    // getters and setters
 }

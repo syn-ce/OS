@@ -28,7 +28,7 @@ public class Main {
 
 //        List<int[]> won = new ArrayList<>();
 
-        multipleRdmTesting(100, 100);
+        multipleRdmTesting(10, 50);
 
         TrainStation ts7 = new TrainStation(2, 3, 1, 4, 2);
         TrainStation ts71 = new TrainStation(2, 3, 1, 4, 2);
@@ -52,7 +52,7 @@ public class Main {
         long totalOldSum = 0;
         int totalTests = nrOfIterations * nrOfRuns;
         for (int i = 0; i < nrOfIterations; i++) {
-            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 7, 7);
+            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 100, 100);
             totalOldSum += res[0];
             totalNewSum += res[1];
             totalWon += res[2];
@@ -62,6 +62,8 @@ public class Main {
         System.out.println();
         System.out.println("Total length of all old logs: " + totalOldSum);
         System.out.println("Total length of all new logs: " + totalNewSum);
+        System.out.println("Average length of old: " + ((double) totalOldSum / (nrOfIterations*nrOfRuns)));
+        System.out.println("Average length of new: " + ((double) totalNewSum / (nrOfIterations*nrOfRuns)));
         System.out.println("Ratio: " + ((double) totalNewSum / totalOldSum));
         System.out.println("Won: " + totalWon + "/" + totalTests);
         System.out.println("Draw: " + totalDraw + "/" + totalTests);
@@ -73,6 +75,7 @@ public class Main {
         int totalNewSum = 0;
         int newWasSmaller = 0;
         int equalLength = 0;
+        double smallestRatio = 1;
         for (int i = 0; i < nrOfRuns; i++) {
 
             Integer[] wagons = new Integer[nrOfWagons];
@@ -82,19 +85,22 @@ public class Main {
             }
             TrainStation tsOld = new TrainStation(wagons);
             TrainStation tsOld2 = new TrainStation(wagons);
-            int oldLogLength = Math.min(tsOld.moveOld(), tsOld2.moveOld2());
+            TrainStation tsOld3 = new TrainStation(wagons);
+            int oldLogLength = Math.min(Math.min(tsOld.moveOld(), tsOld2.moveOld2()), tsOld3.moveOld3());
             TrainStation tsNew = new TrainStation(wagons);
             int newLogLength = tsNew.moveNew();
 
             if (newLogLength < oldLogLength) {
                 newWasSmaller++;
-                System.out.println("New beat old here: " + Arrays.toString(wagons));
+//                System.out.println("New beat old here: " + Arrays.toString(wagons));
             } else if (newLogLength == oldLogLength) {
                 equalLength++;
             } else {
                 System.out.println(Arrays.deepToString(wagons));
             }
-
+            if ((double) newLogLength / oldLogLength < smallestRatio) {
+                smallestRatio = (double) newLogLength / oldLogLength;
+            }
             totalOldSum += oldLogLength;
             totalNewSum += newLogLength;
         }
@@ -106,6 +112,7 @@ public class Main {
         System.out.println("Draw in " + equalLength + "/" + nrOfRuns);
         System.out.println("Total: " + (newWasSmaller + equalLength) + "/" + nrOfRuns);
         System.out.println("Lost: " + (nrOfRuns - newWasSmaller - equalLength));
+        System.out.println("Smallest ratio = " + smallestRatio);
         return new int[]{totalOldSum, totalNewSum, newWasSmaller, equalLength};
     }
 }

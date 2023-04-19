@@ -1,15 +1,25 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Stack;
-// ALL WAGONS MUST HAVE POSITIVE NUMBERS
+import java.util.*;
+
+/**
+ * A Rail consists of a Stack of wagons, the value of each represented by an Integer. There may be gaps in the numbering
+ * and an arbitrary number of wagons may have the same value. Out of all the wagons currently on the Rail, only one
+ * can ever be moved, that being the "last" one. Similarly, a wagon can only be added at the "end" of the Rail.
+ */
 public class Rail {
     private final String name;
 
     private final Stack<Integer> wagons;
 
-    public Rail(String name, Stack<Integer> wagons) {
+    /**
+     * Constructs a new Rail with the specified name and a Stack representing the wagon values in their correct
+     * ordering. The top of the Stack will be interpreted as the last wagon, meaning the wagon which can be accessed.
+     * @param name Name of the Rail. Used in the log.
+     * @param wagons Stack of wagons in correct order. Top of Stack is the side of the Rail from which the last wagon
+     *               can be accessed.
+     */
+    public Rail(String name, Integer[] wagons) {
         this.name = name;
-        this.wagons = wagons;
+        this.wagons = arrToReverseStack(wagons);
     }
 
     public Rail(String name) {
@@ -17,6 +27,10 @@ public class Rail {
         this.wagons = new Stack<>();
     }
 
+    /**
+     * Removes the last wagon of the Rail.
+     * @return Wagon which has been removed.
+     */
     public Integer removeWagon() {
         if (wagons.isEmpty()) {
             return null;
@@ -24,15 +38,19 @@ public class Rail {
         return wagons.pop();
     }
 
-    public void addWagon(int waggonNr) {
-        wagons.add(waggonNr);
+    /**
+     * Adds a wagon to the end of the Rail.
+     * @param wagonValue Value of wagon to be added.
+     */
+    public void addWagon(int wagonValue) {
+        wagons.add(wagonValue);
     }
 
     /**
      * @return int-array as copy of the wagon-values on the rail.
      */
-    public Integer[] getWagonValues() {
-        Integer[] copy = new Integer[wagons.size()];
+    public int[] getWagonValues() {
+        int[] copy = new int[wagons.size()];
         for (int i = 0; i < wagons.size(); i++) {
             copy[i] = wagons.get(i);
         }
@@ -41,13 +59,18 @@ public class Rail {
 
     /**
      *
-     * @return String-representation of the wagons on the rail. Note that the top of the wagons-stack represents the back of the train.
+     * @return String-representation of the wagons on the rail. The top of the wagons-stack represents the last wagon on
+     * the Rail.
      */
     public String getWagonsString() {
         String s = wagons.toString();
         return s.substring(1, s.length() - 1).replace(",", "");
     }
 
+    /**
+     *
+     * @return String-representation of the wagons on the rail in reverse order.
+     */
     public String getReverseWagonString() {
         Stack<Integer> temp = (Stack<Integer>) wagons.clone();
         Collections.reverse(temp);
@@ -60,9 +83,9 @@ public class Rail {
     }
 
     /**
-     * @return The number/value of the upfront wagon.
+     * @return The value of the last wagon.
      */
-    public Integer getNextWagon() {
+    public Integer getNextWagonValue() {
         if (wagons.isEmpty()) {
             return null;
         }
@@ -70,15 +93,16 @@ public class Rail {
     }
 
     /**
-     * @param nr Value of wagon which is searched.
-     * @return Smallest position of a wagon with value nr. Starts searching from the back of the train. Is equal to the
-     * number of wagons which would have to be moved to gain access to the nearest wagon with nr. If not present, return -1.
+     * @param value Value which is searched.
+     * @return Smallest position of a wagon with value value. Starts searching from the end of the train (the last wagon).
+     * Is equal to the number of wagons which would have to be moved to gain access to the nearest wagon with value.
+     * If not present, return -1.
      */
-    public int getSmallestPosOfNr(int nr) {
+    public int getSmallestPosOfValue(int value) {
         ArrayList<Integer> tempFuck = new ArrayList<>();
         int firstPos = 0;
         while (!wagons.isEmpty()) {
-            if (wagons.peek() == nr) {
+            if (wagons.peek() == value) {
                 Collections.reverse(tempFuck);
                 wagons.addAll(tempFuck);
                 return firstPos;
@@ -91,7 +115,25 @@ public class Rail {
         return -1;
     }
 
-    // TODO: can cause exception, this might be a problem depending on how it's called
+    /**
+     * Converts an array of Integers to a Stack. The first Integer in the array will be the top of the Stack.
+     *
+     * @param arr Array to be converted.
+     * @return Stack containing the values of the array. First value in the array will be at the top of the Stack.
+     */
+    private Stack<Integer> arrToReverseStack(Integer[] arr) {
+        List<Integer> wagons = Arrays.asList(arr.clone());
+        Collections.reverse(wagons);
+        Stack<Integer> aS = new Stack<>();
+        aS.addAll(wagons);
+        return aS;
+    }
+
+    /**
+     * Getter for the value of the wagon positioned at pos. Indexing starts at 0 from the last wagon.
+     * @param pos Position of the wagon in the Stack of the Rail.
+     * @return Value of wagon at pos.
+     */
     public int getWagonValue(int pos) {
         if (pos >= wagons.size()) {
             return -1;
