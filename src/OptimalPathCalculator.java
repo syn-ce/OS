@@ -21,8 +21,8 @@ public class OptimalPathCalculator {
         this.uniqueWagonValuesAscending = uniqueWagonValuesAscending;
 
         // construct cost-arrays
-        int[][] C_L_arrays = getC_L_arrays();
-        int[][] C_R_arrays = getC_R_arrays();
+        int[][] C_L_arrays = getLeftCostArrays();
+        int[][] C_R_arrays = getRightCostArrays();
 
         // construct graph for problem and solve using Dijkstra
         railGraph = new RailGraph(wagons, this.uniqueWagonValuesAscending, C_L_arrays, C_R_arrays);
@@ -81,7 +81,7 @@ public class OptimalPathCalculator {
      *
      * @return Array of all left-cost arrays.
      */
-    private int[][] getC_L_arrays() {
+    private int[][] getLeftCostArrays() {
         int[][] C_L_arrays = new int[uniqueWagonValuesAscending.length][];
         for (int i = 0; i < C_L_arrays.length; i++) {
             C_L_arrays[i] = getC_Li(wagons, uniqueWagonValuesAscending[i]);
@@ -94,7 +94,7 @@ public class OptimalPathCalculator {
      *
      * @return Array of all right-cost arrays.
      */
-    private int[][] getC_R_arrays() {
+    private int[][] getRightCostArrays() {
         int[][] C_R_arrays = new int[uniqueWagonValuesAscending.length][];
         for (int i = 0; i < C_R_arrays.length; i++) {
             C_R_arrays[i] = getC_Ri(wagons, uniqueWagonValuesAscending[i]);

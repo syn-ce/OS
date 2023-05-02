@@ -34,28 +34,10 @@ public class TrainStation {
      * Instruct the Shunter to move the wagons from the parkingRail to the trainRail with as little moves as possible.
      * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
      */
-    public int moveNew() {
+    public int moveWagons() {
         String[] optimalPath = getOptimalPath();
         shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
         shunter.shuntNew(optimalPath);
-        return shunter.getLogSize();
-    }
-
-    public int moveOld() {
-        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
-        shunter.shunt2();
-        return shunter.getLogSize();
-    }
-
-    public int moveOld2() {
-        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
-        shunter.shunt2equal();
-        return shunter.getLogSize();
-    }
-
-    public int moveOld3() {
-        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
-        shunter.shunt3();
         return shunter.getLogSize();
     }
 
