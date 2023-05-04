@@ -1,5 +1,8 @@
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Entry point for the program, used for testing / demonstration.
+ */
 public class Main {
     public static void main(String[] args) {
         TrainStation ts = new TrainStation(12, 4, 19, 20, 3, 16, 4, 6, 9, 8);
@@ -22,6 +25,12 @@ public class Main {
         */
     }
 
+    /**
+     * Generates an array of random Integers.
+     * @param nrOfValues Number of values of the array.
+     * @param maxValue Maximum value to generate.
+     * @return Array of random Integers of size nrOfValues with values between 1 and maxValue (inclusive).
+     */
     private static Integer[] rdmIntegerArray(int nrOfValues, int maxValue) {
         Integer[] wagons = new Integer[nrOfValues];
         for (int j = 0; j < nrOfValues; j++) {

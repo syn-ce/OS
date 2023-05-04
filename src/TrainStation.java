@@ -33,7 +33,6 @@ public class TrainStation {
 
     /**
      * Instruct the Shunter to move the wagons from the parkingRail to the mainRail with as little moves as possible.
-     * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
      */
     public void moveWagonsFromParkingToMain() {
         String[] optimalPath = optimalPathCalculator.getOptimalPath();
