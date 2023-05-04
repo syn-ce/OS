@@ -21,23 +21,23 @@ public class Dijkstra {
         resetShortestPaths(g);
         source.setDistance(0);
 
-        Set<Node> settledNodes = new HashSet<>();
-        Set<Node> unsettledNodes = new HashSet<>();
+        Set<Node> finishedNodes = new HashSet<>();
+        Set<Node> unfinishedNodes = new HashSet<>();
 
-        unsettledNodes.add(source);
+        unfinishedNodes.add(source);
 
-        while (unsettledNodes.size() != 0) {
-            Node currentNode = getLowestDistanceNode(unsettledNodes);
-            unsettledNodes.remove(currentNode);
+        while (unfinishedNodes.size() != 0) {
+            Node currentNode = getLowestDistanceNode(unfinishedNodes);
+            unfinishedNodes.remove(currentNode);
             for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getSuccessors().entrySet()) {
                 Node adjacentNode = adjacencyPair.getKey();
                 Integer edgeWeight = adjacencyPair.getValue();
-                if (!settledNodes.contains(adjacentNode)) {
+                if (!finishedNodes.contains(adjacentNode)) {
                     calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
-                    unsettledNodes.add(adjacentNode);
+                    unfinishedNodes.add(adjacentNode);
                 }
             }
-            settledNodes.add(currentNode);
+            finishedNodes.add(currentNode);
         }
     }
 
@@ -45,30 +45,30 @@ public class Dijkstra {
      * Looks at the Node to evaluate and another Node connected to the first Node via an edge. If the first Nodes
      * distance can be shortened by going through the second Node and the specified edge, the first Node's shortest
      * distance and shortest path are updated accordingly.
-     * @param evaluationNode Node for which a shorter path may be found by going through sourceNode and the edge between them.
-     * @param edgeWeight Weight of the edge between evaluationNode and sourceNode.
-     * @param sourceNode Node before the evaluationNode, connected to it via an edge with weight edgeWeight.
+     * @param nodeToUpdate Node for which a shorter path may be found by going through sourceNode and the edge between them.
+     * @param edgeWeight Weight of the edge between nodeToUpdate and sourceNode.
+     * @param sourceNode Node before the nodeToUpdate, connected to it via an edge with weight edgeWeight.
      */
-    private void calculateMinimumDistance(Node evaluationNode, Integer edgeWeight, Node sourceNode) {
+    private void calculateMinimumDistance(Node nodeToUpdate, Integer edgeWeight, Node sourceNode) {
         Integer sourceDistance = sourceNode.getDistance();
-        if (sourceDistance + edgeWeight < evaluationNode.getDistance()) {
-            evaluationNode.setDistance(sourceDistance + edgeWeight);
+        if (sourceDistance + edgeWeight < nodeToUpdate.getDistance()) {
+            nodeToUpdate.setDistance(sourceDistance + edgeWeight);
             LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
             shortestPath.add(sourceNode);
-            evaluationNode.setShortestPath(shortestPath);
+            nodeToUpdate.setShortestPath(shortestPath);
         }
     }
 
     /**
      * Of all the nodes for which the shortest path from the source Node has not yet been determined definitely, finds
      * the one with the smallest distance to the source Node.
-     * @param unsettledNodes Nodes to which the distance has not yet been finally determined.
+     * @param unfinishedNodes Nodes to which the distance has not yet been finally determined.
      * @return The unsettled Node with the smallest distance to the source Node.
      */
-    private Node getLowestDistanceNode(Set<Node> unsettledNodes) {
+    private Node getLowestDistanceNode(Set<Node> unfinishedNodes) {
         Node lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
-        for (Node node : unsettledNodes) {
+        for (Node node : unfinishedNodes) {
             int nodeDistance = node.getDistance();
             if (nodeDistance < lowestDistance) {
                 lowestDistance = nodeDistance;

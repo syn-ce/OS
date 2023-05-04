@@ -119,7 +119,6 @@ public class RailGraph {
         return nodes;
     }
 
-
     /**
      * Gets the index of the first occurrence of an int in an Array of ints.
      *

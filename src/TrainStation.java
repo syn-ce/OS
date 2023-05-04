@@ -2,14 +2,14 @@ import java.util.*;
 
 /**
  * Contains all the Rails of the station and instructs the Shunter to move all wagons from the parkingRail to the
- * trainRail.
+ * mainRail.
  */
 
 public class TrainStation {
 
     private final Rail parkingRail;
     private final Rail switchingRail;
-    private final Rail trainRail;
+    private final Rail mainRail;
     private final int[] wagonValues;
     private final int[] uniqueWagonValuesAscending;
     private OptimalPathCalculator optimalPathCalculator;
@@ -24,21 +24,21 @@ public class TrainStation {
     public TrainStation(Integer... wagonValues) {
         parkingRail = new Rail("parkingRail", wagonValues);
         switchingRail = new Rail("switchingRail");
-        trainRail = new Rail("trainRail");
+        mainRail = new Rail("mainRail");
         this.wagonValues = integerToIntArray(wagonValues);
         uniqueWagonValuesAscending = getUniqueWagonValuesAscending(this.wagonValues);
         optimalPathCalculator = new OptimalPathCalculator(this.wagonValues, this.uniqueWagonValuesAscending);
+        optimalPathCalculator.calculateOptimalPath();
     }
 
     /**
-     * Instruct the Shunter to move the wagons from the parkingRail to the trainRail with as little moves as possible.
+     * Instruct the Shunter to move the wagons from the parkingRail to the mainRail with as little moves as possible.
      * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
      */
-    public int moveWagons() {
-        String[] optimalPath = getOptimalPath();
-        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
-        shunter.shuntNew(optimalPath);
-        return shunter.getLogSize();
+    public void moveWagonsFromParkingToMain() {
+        String[] optimalPath = optimalPathCalculator.getOptimalPath();
+        shunter = new Shunter(parkingRail, switchingRail, mainRail, uniqueWagonValuesAscending);
+        shunter.moveWagonsFromParkingToMain(optimalPath);
     }
 
     /**
@@ -70,15 +70,4 @@ public class TrainStation {
         Arrays.sort(temp);
         return temp;
     }
-
-    /**
-     * Calculates the optimal path to be taken when moving the wagons.
-     *
-     * @return An array of Strings containing the names of the nodes which are traversed in the optimal path
-     */
-
-    private String[] getOptimalPath() {
-        return optimalPathCalculator.getOptimalPath();
-    }
-
 }

@@ -1,7 +1,7 @@
 import java.util.*;
 
 /**
- * The Shunter will move all wagons from the parking-Rail to the train-Rail with as little movements as possible.
+ * The Shunter will move all wagons from the parking-Rail to the main-Rail with as little movements as possible.
  * It will document each of its movements in a log. In order to achieve this, it will need an optimal path in a very
  * specific format which will be provided by the TrainStation. When the Shunter has to make a non-trivial decision, it
  * will consult this optimal path and then be able to decide optimally.
@@ -10,7 +10,7 @@ public class Shunter {
     private Log log = new Log(new String[]{"Waggon", "von", "nach", "Zuggleis", "Rangiergleis", "Abstellgleis"}, new boolean[]{true, false, false, true, true, true});
     private Rail parkingRail;
     private Rail switchingRail;
-    private Rail trainRail;
+    private Rail mainRail;
     private int[] wagonValues;
     private int[] uniqueWagonValuesAscending;
 
@@ -19,14 +19,14 @@ public class Shunter {
      *
      * @param parkingRail   Rail on which the wagons are initially positioned.
      * @param switchingRail Rail used for shunting the wagons.
-     * @param trainRail     Rail on which the wagons shall all be placed in correct order.
+     * @param mainRail     Rail on which the wagons shall all be placed in correct order.
      * @param uniqueWagonValuesAscending All unique values which occur in the wagon values of the parkingRail, in
      *                                   ascending order.
      */
-    public Shunter(Rail parkingRail, Rail switchingRail, Rail trainRail, int[] uniqueWagonValuesAscending) {
+    public Shunter(Rail parkingRail, Rail switchingRail, Rail mainRail, int[] uniqueWagonValuesAscending) {
         this.parkingRail = parkingRail;
         this.switchingRail = switchingRail;
-        this.trainRail = trainRail;
+        this.mainRail = mainRail;
         wagonValues = parkingRail.getWagonValues();
         Arrays.sort(wagonValues);
         this.uniqueWagonValuesAscending = uniqueWagonValuesAscending;
@@ -41,20 +41,20 @@ public class Shunter {
     private void moveWagon(Rail from, Rail to) {
         int waggon = from.removeWagon();
         to.addWagon(waggon);
-        log.addAction(String.valueOf(waggon), from.getName(), to.getName(), trainRail.getWagonsString(), switchingRail.getReverseWagonString(), parkingRail.getReverseWagonString());
+        log.addAction(String.valueOf(waggon), from.getName(), to.getName(), mainRail.getWagonsString(), switchingRail.getReverseWagonString(), parkingRail.getReverseWagonString());
     }
 
     /**
-     * Moves all wagons onto the train-Rail. The Shunter is able to make its own decisions, meaning that it will figure
+     * Moves all wagons onto the main-Rail. The Shunter is able to make its own decisions, meaning that it will figure
      * out the Rail on which the wagons with the next number are currently standing. If all of these wagons are parked
-     * on the same Rail, the Shunter will move all of them onto the train-Rail with as few moves as possible. If wagons
+     * on the same Rail, the Shunter will move all of them onto the main-Rail with as few moves as possible. If wagons
      * with the next value happen to be located on both rails, the Shunter will consult the Array of Strings
      * representing the names of the nodes of the optimal path, and make its decision based on that information.
      *
      * @param optimalPathNodeNames Array of Strings containing the names of the nodes of the optimal path in correct
      *                             order. For more information, refer to the documentation of `OptimalPathCalculator`.
      */
-    public void shuntNew(String[] optimalPathNodeNames) {
+    public void moveWagonsFromParkingToMain(String[] optimalPathNodeNames) {
         for (int i = 0; i < uniqueWagonValuesAscending.length; i++) {
             int wagonNr = uniqueWagonValuesAscending[i];
             // get positions of that wagonNr on both rails
@@ -87,21 +87,16 @@ public class Shunter {
     /**
      * Will move all wagons from the from-Rail to the to-Rail until there are no more wagons with the
      * specified value in the from-Rail. All wagons with value == nr will be moved from the from-Rail onto the
-     * train-Rail instead.
+     * main-Rail instead.
      *
-     * @param wagonValue Value of wagons to be moved to trainRail.
+     * @param wagonValue Value of wagons to be moved to Rail `to`.
      */
     private void moveAllValueFromTo(int wagonValue, Rail from, Rail to) {
         while (from.getSmallestPosOfValue(wagonValue) != -1) {
             while (from.getNextWagonValue() != wagonValue) {
                 moveWagon(from, to);
             }
-            moveWagon(from, trainRail);
+            moveWagon(from, mainRail);
         }
     }
-
-    public int getLogSize() {
-        return log.getSize();
-    }
-
 }

@@ -1,13 +1,13 @@
 /**
  * The OptimalPathCalculator calculates the optimal path to be taken when moving the wagon values from the parking Rail
- * to the train Rail. The OptimalPathCalculator will assume that initially all wagons are parked on the parking Rail.
+ * to the mainRail. The OptimalPathCalculator will assume that initially all wagons are parked on the parking Rail.
  * The optimal path is calculated by constructing a graph related to the problem and finding the shortest path between
  * specific nodes.
  */
 public class OptimalPathCalculator {
     private final int[] uniqueWagonValuesAscending;
     private final int[] wagons;
-    private final String[] optimalPath;
+    private String[] optimalPath;
     private RailGraph railGraph;
     /**
      * Constructs a new OptimalPathCalculator and calculates the optimal path using a RailGraph and Dijkstra's algorithm.
@@ -19,10 +19,12 @@ public class OptimalPathCalculator {
         wagons = wagonValues.clone();  // TODO: clone probably not necessary here, but check where it is
         // initialise different wagons-values unique ascending
         this.uniqueWagonValuesAscending = uniqueWagonValuesAscending;
+    }
 
+    public void calculateOptimalPath() {
         // construct cost-arrays
-        int[][] C_L_arrays = getLeftCostArrays();
-        int[][] C_R_arrays = getRightCostArrays();
+        int[][] C_L_arrays = calcLeftCostArrays();
+        int[][] C_R_arrays = calcRightCostArrays();
 
         // construct graph for problem and solve using Dijkstra
         railGraph = new RailGraph(wagons, this.uniqueWagonValuesAscending, C_L_arrays, C_R_arrays);
@@ -81,10 +83,10 @@ public class OptimalPathCalculator {
      *
      * @return Array of all left-cost arrays.
      */
-    private int[][] getLeftCostArrays() {
+    private int[][] calcLeftCostArrays() {
         int[][] C_L_arrays = new int[uniqueWagonValuesAscending.length][];
         for (int i = 0; i < C_L_arrays.length; i++) {
-            C_L_arrays[i] = getC_Li(wagons, uniqueWagonValuesAscending[i]);
+            C_L_arrays[i] = calcC_Li(wagons, uniqueWagonValuesAscending[i]);
         }
         return C_L_arrays;
     }
@@ -94,10 +96,10 @@ public class OptimalPathCalculator {
      *
      * @return Array of all right-cost arrays.
      */
-    private int[][] getRightCostArrays() {
+    private int[][] calcRightCostArrays() {
         int[][] C_R_arrays = new int[uniqueWagonValuesAscending.length][];
         for (int i = 0; i < C_R_arrays.length; i++) {
-            C_R_arrays[i] = getC_Ri(wagons, uniqueWagonValuesAscending[i]);
+            C_R_arrays[i] = calcC_Ri(wagons, uniqueWagonValuesAscending[i]);
         }
         return C_R_arrays;
     }
@@ -115,7 +117,7 @@ public class OptimalPathCalculator {
      * @param z   Value present in the array after which the cost shall be calculated for all positions.
      * @return Left cost array for value z.
      */
-    private int[] getC_Li(int[] arr, int z) { // gets the cost array for layer i, corresponding to wagon-nr z
+    private int[] calcC_Li(int[] arr, int z) { // gets the cost array for layer i, corresponding to wagon-nr z
         int[] C_Lz = new int[arr.length + 1];
         int firstInd = getFirstOccurrence(arr, z);
 
@@ -150,7 +152,7 @@ public class OptimalPathCalculator {
      * @param z   Value present in the array after which the cost shall be calculated for all positions.
      * @return Right cost array for value z.
      */
-    private int[] getC_Ri(int[] arr, int z) { // gets the cost array for layer i, corresponding to wagon-nr z
+    private int[] calcC_Ri(int[] arr, int z) { // gets the cost array for layer i, corresponding to wagon-nr z
         int[] C_Rz = new int[arr.length + 1];
         int lastInd = getLastOccurrence(arr, z);
 

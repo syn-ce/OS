@@ -97,8 +97,6 @@ public class Log {
         return String.format(s.append("\n").toString(), (Object[]) columnLengths);
     }
 
-    // TODO: implement way to check whether the protokoll has changed since the last time the protokoll has been printed; if not, just return the String previously constructed (should save some time)
-
     /**
      * Converts the log into readable format and prints it into the console.
      */
@@ -110,14 +108,5 @@ public class Log {
             printableProtokoll.append(line);
         }
         System.out.println(printableProtokoll);
-    }
-
-    /**
-     * Getter for the size of the protocol, i.e. the number of actions added to the protocol so far.
-     *
-     * @return The number of actions recorded so far.
-     */
-    public int getSize() {
-        return actionId - 1;
     }
 }

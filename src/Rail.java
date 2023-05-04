@@ -94,7 +94,7 @@ public class Rail {
 
     /**
      * @param value Value which is searched.
-     * @return Smallest position of a wagon with value value. Starts searching from the end of the train (the last wagon).
+     * @return Smallest position of a wagon with value `value`. Starts searching from the end of the train (the last wagon).
      * Is equal to the number of wagons which would have to be moved to gain access to the nearest wagon with value.
      * If not present, return -1.
      */
@@ -127,21 +127,5 @@ public class Rail {
         Stack<Integer> aS = new Stack<>();
         aS.addAll(wagons);
         return aS;
-    }
-
-    /**
-     * Getter for the value of the wagon positioned at pos. Indexing starts at 0 from the last wagon.
-     * @param pos Position of the wagon in the Stack of the Rail.
-     * @return Value of wagon at pos.
-     */
-    public int getWagonValue(int pos) {
-        if (pos >= wagons.size()) {
-            return -1;
-        }
-        return wagons.get(pos);
-    }
-
-    public int getNrOfWagons() {
-        return wagons.size();
     }
 }
