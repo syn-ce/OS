@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
@@ -28,12 +24,8 @@ public class Main {
 
 //        List<int[]> won = new ArrayList<>();
 
-        multipleRdmTesting(10, 50);
-
         TrainStation ts7 = new TrainStation(2, 3, 1, 4, 2);
-        TrainStation ts71 = new TrainStation(2, 3, 1, 4, 2);
-        ts71.moveOld();
-        ts7.moveNew();
+        ts7.moveNew(true);
 
 //        TrainStation ts6 = new TrainStation(10, 2, 3, 8, 8, 7, 6, 6, 2, 3); // -> this example was fixed by fixing the starting node to the left node of the first layer (LP1, so to speak); indeed, this had not been the case before, though it should have (since we always have to start from the left on the first layer)
 //        TrainStation ts61 = new TrainStation(10, 2, 3, 8, 8, 7, 6, 6, 2, 3);
@@ -46,73 +38,21 @@ public class Main {
     }
 
     private static void multipleRdmTesting(int nrOfIterations, int nrOfRuns) {
-        int totalWon = 0;
-        int totalDraw = 0;
-        long totalNewSum = 0;
-        long totalOldSum = 0;
-        int totalTests = nrOfIterations * nrOfRuns;
-        for (int i = 0; i < nrOfIterations; i++) {
-            int[] res = rdmTestingNewVsOldShunt(nrOfRuns, 100, 100);
-            totalOldSum += res[0];
-            totalNewSum += res[1];
-            totalWon += res[2];
-            totalDraw += res[3];
-        }
-
-        System.out.println();
-        System.out.println("Total length of all old logs: " + totalOldSum);
-        System.out.println("Total length of all new logs: " + totalNewSum);
-        System.out.println("Average length of old: " + ((double) totalOldSum / (nrOfIterations*nrOfRuns)));
-        System.out.println("Average length of new: " + ((double) totalNewSum / (nrOfIterations*nrOfRuns)));
-        System.out.println("Ratio: " + ((double) totalNewSum / totalOldSum));
-        System.out.println("Won: " + totalWon + "/" + totalTests);
-        System.out.println("Draw: " + totalDraw + "/" + totalTests);
-        System.out.println("Lost: " + (totalTests - totalWon - totalDraw) + "/" + totalTests);
+       for (int i = 0; i < nrOfIterations; i++) {
+            rdmTest(nrOfRuns, 100, 100, false);
+       }
     }
 
-    private static int[] rdmTestingNewVsOldShunt(int nrOfRuns, int nrOfWagons, int maxWagonValue) {
-        int totalOldSum = 0;
-        int totalNewSum = 0;
-        int newWasSmaller = 0;
-        int equalLength = 0;
-        double smallestRatio = 1;
+    private static void rdmTest(int nrOfRuns, int nrOfWagons, int maxWagonValue, boolean print) {
         for (int i = 0; i < nrOfRuns; i++) {
-
             Integer[] wagons = new Integer[nrOfWagons];
             for (int j = 0; j < nrOfWagons; j++) {
                 int wagon = ThreadLocalRandom.current().nextInt(1, maxWagonValue + 1);
                 wagons[j] = wagon;
             }
-            TrainStation tsOld = new TrainStation(wagons);
-            TrainStation tsOld2 = new TrainStation(wagons);
-            TrainStation tsOld3 = new TrainStation(wagons);
-            int oldLogLength = Math.min(Math.min(tsOld.moveOld(), tsOld2.moveOld2()), tsOld3.moveOld3());
             TrainStation tsNew = new TrainStation(wagons);
-            int newLogLength = tsNew.moveNew();
-
-            if (newLogLength < oldLogLength) {
-                newWasSmaller++;
-//                System.out.println("New beat old here: " + Arrays.toString(wagons));
-            } else if (newLogLength == oldLogLength) {
-                equalLength++;
-            } else {
-                System.out.println(Arrays.deepToString(wagons));
-            }
-            if ((double) newLogLength / oldLogLength < smallestRatio) {
-                smallestRatio = (double) newLogLength / oldLogLength;
-            }
-            totalOldSum += oldLogLength;
-            totalNewSum += newLogLength;
+            int logLength = tsNew.moveNew(print);
+            if (print) System.out.println("Length of log = " + logLength);
         }
-        System.out.println("Total length of all old logs: " + totalOldSum);
-        System.out.println("Total length of all new logs: " + totalNewSum);
-        System.out.println("Ratio: " + ((double) totalNewSum / totalOldSum));
-
-        System.out.println("New beat old in " + newWasSmaller + "/" + nrOfRuns + " cases.");
-        System.out.println("Draw in " + equalLength + "/" + nrOfRuns);
-        System.out.println("Total: " + (newWasSmaller + equalLength) + "/" + nrOfRuns);
-        System.out.println("Lost: " + (nrOfRuns - newWasSmaller - equalLength));
-        System.out.println("Smallest ratio = " + smallestRatio);
-        return new int[]{totalOldSum, totalNewSum, newWasSmaller, equalLength};
     }
 }
