@@ -38,7 +38,7 @@ public class TrainStation {
     public int moveNew(boolean print) {
         String[] optimalPath = getOptimalPath();
         shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
-        shunter.shuntNew(optimalPath);
+        shunter.shuntNew(optimalPath, print);
         return shunter.getLogSize();
     }
 

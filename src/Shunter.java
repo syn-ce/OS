@@ -13,7 +13,6 @@ public class Shunter {
     private Rail trainRail;
     private int[] wagonValues;
     private int[] uniqueWagonValuesAscending;
-    private boolean print = false;
 
     /**
      * Creates a new Shunter with the specified Rails. All wagons should initially be placed on the parking-Rail.
@@ -55,7 +54,7 @@ public class Shunter {
      * @param optimalPathNodeNames Array of Strings containing the names of the nodes of the optimal path in correct
      *                             order. For more information, refer to the documentation of `OptimalPathCalculator`.
      */
-    public void shuntNew(String[] optimalPathNodeNames) {
+    public void shuntNew(String[] optimalPathNodeNames, boolean print) {
         for (int i = 0; i < uniqueWagonValuesAscending.length; i++) {
             int wagonNr = uniqueWagonValuesAscending[i];
             // get positions of that wagonNr on both rails
