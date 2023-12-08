@@ -1,3 +1,8 @@
+package main.java.graph.algorithm;
+
+import main.java.graph.datastructure.Node;
+import main.java.graph.datastructure.RailGraph;
+
 /**
  * The OptimalPathCalculator calculates the optimal path to be taken when moving the wagon values from the parking Rail
  * to the train Rail. The OptimalPathCalculator will assume that initially all wagons are parked on the parking Rail.

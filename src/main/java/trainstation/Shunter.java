@@ -1,4 +1,7 @@
+package main.java.trainstation;
+
 import java.util.*;
+import main.java.log.Log;
 
 /**
  * The Shunter will move all wagons from the parking-Rail to the train-Rail with as little movements as possible.

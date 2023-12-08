@@ -1,3 +1,5 @@
+package main.java.graph.datastructure;
+
 import java.util.*;
 
 /**

@@ -1,3 +1,5 @@
+import main.java.trainstation.TrainStation;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {

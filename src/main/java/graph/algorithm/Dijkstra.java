@@ -1,3 +1,8 @@
+package main.java.graph.algorithm;
+
+import main.java.graph.datastructure.Node;
+import main.java.graph.datastructure.RailGraph;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;

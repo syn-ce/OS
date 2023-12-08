@@ -1,3 +1,7 @@
+package main.java.trainstation;
+
+import main.java.graph.algorithm.OptimalPathCalculator;
+
 import java.util.*;
 
 /**
