@@ -7,24 +7,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The RailGraph is used to construct a Graph representing the problem the Shunter has to solve (i.e. moving all
+ * The RailGraph is used to construct a Graph representing the problem the Switcher has to solve (i.e. moving all
  * wagons from the parking-Rail to the train-Rail with as little movements as possible). The RailGraph is a Graph in
  * which for every unique wagon value in wagonValues, two nodes are being created, one LP- and one RP-Node. The nodes
- * represent decisions. The node with the name "LPi" indicates the decision that for the wagon value i, the Shunter
- * should start removing the values of that wagon from left to right. However, sometimes the Shunter will start "in the
+ * represent decisions. The node with the name "LPi" indicates the decision that for the wagon value i, the Switcher
+ * should start removing the values of that wagon from left to right. However, sometimes the Switcher will start "in the
  * middle" of all wagons with a certain number, meaning it won't be able to immediately start removing values from the
- * left, for instance. In this case, the Shunter will still move to the leftmost position of the current wagon value
+ * left, for instance. In this case, the Switcher will still move to the leftmost position of the current wagon value
  * before it moves to the rightmost, but will immediately move every wagon with the current value it encounters along
  * the way onto the train-Rail. This has to be done in order to keep the strategy optimal.
  * Therefore, a proper rephrasing of the nodes' meanings may be stated as follows: For each unique wagon value i, the
- * node named "LPi" corresponds to the decision of the Shunter to remove the RIGHTMOST wagon with value i last.
- * Accordingly, a node named "RPi" stand for the decision of the Shunter to remove the LEFTMOST wagon with value i last.
+ * node named "LPi" corresponds to the decision of the Switcher to remove the RIGHTMOST wagon with value i last.
+ * Accordingly, a node named "RPi" stand for the decision of the Switcher to remove the LEFTMOST wagon with value i last.
  * The graph can be imagined as being separated into layers, each layer consisting of one "LP" and one "RP" node.
  * Each node connects to both nodes of the next layer via a weighted edge. The weight of the edge from node LPi to RPj
  * indicates the cost of removing the leftmost wagon with value j last, after having removed the rightmost wagon with
  * value i last.
  * The optimal path, i.e. the optimal way in which to remove all wagon values, is then determined by calculating the
- * shortest path from the "LP"-node of the first layer (since that is where the Shunter logically has to start when all
+ * shortest path from the "LP"-node of the first layer (since that is where the Switcher logically has to start when all
  * wagons are initially parked on the parking Rail) to one of the nodes of the last layer.
  */
 public class RailGraph {

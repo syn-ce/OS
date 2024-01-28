@@ -4,12 +4,12 @@ import java.util.*;
 import main.java.log.Log;
 
 /**
- * The Shunter will move all wagons from the parking-Rail to the train-Rail with as little movements as possible.
+ * The Switcher will move all wagons from the parking-Rail to the train-Rail with as little movements as possible.
  * It will document each of its movements in a log. In order to achieve this, it will need an optimal path in a very
- * specific format which will be provided by the TrainStation. When the Shunter has to make a non-trivial decision, it
+ * specific format which will be provided by the TrainStation. When the Switcher has to make a non-trivial decision, it
  * will consult this optimal path and then be able to decide optimally.
  */
-public class Shunter {
+public class Switcher {
     private Log log = new Log(new String[]{"Wagon", "From", "To", "Main", "Siding", "Parking"}, new boolean[]{true, false, false, true, true, true});
     private Rail parkingRail;
     private Rail sidingRail;
@@ -18,15 +18,15 @@ public class Shunter {
     private int[] uniqueWagonValuesAscending;
 
     /**
-     * Creates a new Shunter with the specified Rails. All wagons should initially be placed on the parking-Rail.
+     * Creates a new Switcher with the specified Rails. All wagons should initially be placed on the parking-Rail.
      *
      * @param parkingRail   Rail on which the wagons are initially positioned.
-     * @param sidingRail Rail used for shunting the wagons.
+     * @param sidingRail Rail used for switching the wagons.
      * @param mainRail     Rail on which the wagons shall all be placed in correct order.
      * @param uniqueWagonValuesAscending All unique values which occur in the wagon values of the parkingRail, in
      *                                   ascending order.
      */
-    public Shunter(Rail parkingRail, Rail sidingRail, Rail mainRail, int[] uniqueWagonValuesAscending) {
+    public Switcher(Rail parkingRail, Rail sidingRail, Rail mainRail, int[] uniqueWagonValuesAscending) {
         this.parkingRail = parkingRail;
         this.sidingRail = sidingRail;
         this.mainRail = mainRail;
@@ -48,10 +48,10 @@ public class Shunter {
     }
 
     /**
-     * Moves all wagons onto the train-Rail. The Shunter is able to make its own decisions, meaning that it will figure
+     * Moves all wagons onto the train-Rail. The Switcher is able to make its own decisions, meaning that it will figure
      * out the Rail on which the wagons with the next number are currently standing. If all of these wagons are parked
-     * on the same Rail, the Shunter will move all of them onto the train-Rail with as few moves as possible. If wagons
-     * with the next value happen to be located on both rails, the Shunter will consult the Array of Strings
+     * on the same Rail, the Switcher will move all of them onto the train-Rail with as few moves as possible. If wagons
+     * with the next value happen to be located on both rails, the Switcher will consult the Array of Strings
      * representing the names of the nodes of the optimal path, and make its decision based on that information.
      *
      * @param optimalPathNodeNames Array of Strings containing the names of the nodes of the optimal path in correct

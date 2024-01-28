@@ -1,4 +1,4 @@
-# Shunting Trains Optimally
+# Optimal Switching
 
 [The Problem](#the-problem)
 [Solution](#solution)

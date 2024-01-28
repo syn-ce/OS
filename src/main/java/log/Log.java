@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * This class is used by the Shunter for documenting its actions when moving the wagons from one Rail to another.
+ * This class is used by the Switcher for documenting its actions when moving the wagons from one Rail to another.
  */
 public class Log {
     private List<String[]> actions = new ArrayList<>();

@@ -5,7 +5,7 @@ import main.java.graph.algorithm.OptimalPathCalculator;
 import java.util.*;
 
 /**
- * Contains all the Rails of the station and instructs the Shunter to move all wagons from the parkingRail to the
+ * Contains all the Rails of the station and instructs the Switcher to move all wagons from the parkingRail to the
  * mainRail.
  */
 
@@ -17,7 +17,7 @@ public class TrainStation {
     private final int[] wagonValues;
     private final int[] uniqueWagonValuesAscending;
     private OptimalPathCalculator optimalPathCalculator;
-    private Shunter shunter;
+    private Switcher switcher;
 
     /**
      * Constructs a new TrainStation with the specified wagon values. The wagon values represent the values of the
@@ -35,15 +35,15 @@ public class TrainStation {
     }
 
     /**
-     * Instruct the Shunter to move the wagons from the parkingRail to the mainRail with as little moves as possible.
-     * @param print Indicate if the Shunter's log shall be printed
-     * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
+     * Instruct the Switcher to move the wagons from the parkingRail to the mainRail with as little moves as possible.
+     * @param print Indicate if the Switcher's log shall be printed
+     * @return The log size of the Switcher (i.e. the number of times the Switcher moved a wagon).
      */
     public int moveNew(boolean print) {
         String[] optimalPath = getOptimalPath();
-        shunter = new Shunter(parkingRail, sidingRail, mainRail, uniqueWagonValuesAscending);
-        shunter.shuntNew(optimalPath, print);
-        return shunter.getLogSize();
+        switcher = new Switcher(parkingRail, sidingRail, mainRail, uniqueWagonValuesAscending);
+        switcher.shuntNew(optimalPath, print);
+        return switcher.getLogSize();
     }
 
     /**
