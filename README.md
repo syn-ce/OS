@@ -1,3 +1,11 @@
+# Shunting Trains Optimally
+
+[The Problem](#the-problem)
+[Solution](#solution)
+[Note on complexity](#note-on-complexity)
+
+## The Problem
+
 You are working at a tiny train station in the middle of nowhere. The station consists of only 3 railways: The main-, the parking- and the siding-rail respectively. There are currently _n_ wagons residing on the parking-rail and your job is to move them to the main-rail. It would've been a very easy task had it not been for the fact that the wagons have been parked in the wrong order. Each wagon has a number assigned to it and in the end **all wagons have to be on the main rail in the correct order**.
 
 Your task is to move all wagons from the parking- to the main-rail with the minimum number of moves possible such that the wagons are sorted in ascending order, i.e. the highest-value-wagon being closest to the intersection. You may assume that there is sufficient space on all rails to house all wagons.
@@ -5,6 +13,13 @@ Your task is to move all wagons from the parking- to the main-rail with the mini
 Before reading on I encourage you to give the problem a try yourself. Though it took me personally a while to come up with a solution, I had a lot of fun in discovering it.
 
 ![example image of the layout of the rails: the siding, parking and main rail intersect at one point, on the parking-rail stand wagons with values 1,2,2,0,2,1](img/rails_ex_image.png)
+
+Note on notation: The above "positioning" will be represented by the following table:
+
+| \-  | 122021 |
+| --- | ------ |
+
+More on that in the solution.
 
 ---
 
@@ -430,3 +445,11 @@ After all this we find ourselves facing a simple shortest-path problem. Note tha
 
 Now throw a Dijkstra at the graph looking for the shortest path to either one of the last layer's two nodes, get the associated path
 and call it a day (or, in my case, a couple of very long evenings).
+
+## Note on complexity
+
+The accompanying implementation is bounded in time by $O(n^2)$, where $n$ denotes the number of wagons (neglecting the rather expensive printing of the final log).
+
+I have yet to investigate whether it is possible to perhaps even get this down to linear (planning on getting back to this in the future), but am reasonably confident that at least $O(n \log n)$ is well within the realm of possibilities, namely by indexing the array beforehand and only calculating the costs of the positionings which are actually needed.
+
+In terms of space this current implementation is also bounded by $O(n^2)$, though optimzing the calculation of the optimal path should get this down to again at least $O(n \log n)$ if not $O(n)$.
