@@ -43,8 +43,8 @@ public class RailGraph {
      * @param C_R_arrays                 An array containing the right cost-array for each unique wagon value, in order.
      */
     public RailGraph(int[] wagons, int[] uniqueWagonValuesAscending, int[][] C_L_arrays, int[][] C_R_arrays) {
-        this.uniqueWagonValuesAscending = uniqueWagonValuesAscending.clone();       // TODO: check whether clone is necessary here
-        wagonValues = wagons.clone();   // TODO: check whether this is necessary
+        this.uniqueWagonValuesAscending = uniqueWagonValuesAscending.clone();
+        wagonValues = wagons.clone();
 
         // initialise lp- and rp-nodes for every unique wagon-nr
         LPNodes = initialiseNodes("LP");
@@ -94,7 +94,7 @@ public class RailGraph {
      * @param layer Layer of the node in the graph = index of the associated wagon value in differentWagonValues.
      * @return The requested Node.
      */
-    public Node getNodeByLayer(String type, int layer) {    // TODO: figure out whether these errors have to be checked? (out of bounds)
+    public Node getNodeByLayer(String type, int layer) {
         if (layer >= uniqueWagonValuesAscending.length) {
             throw new RuntimeException("Layer out of range!");
         }

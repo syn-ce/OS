@@ -21,7 +21,7 @@ public class OptimalPathCalculator {
      *                     (the "last" wagon).
      */
     public OptimalPathCalculator(int[] wagonValues, int[] uniqueWagonValuesAscending) {
-        wagons = wagonValues.clone();  // TODO: clone probably not necessary here, but check where it is
+        wagons = wagonValues.clone();
         // initialise different wagons-values unique ascending
         this.uniqueWagonValuesAscending = uniqueWagonValuesAscending;
 
