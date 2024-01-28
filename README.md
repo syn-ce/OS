@@ -1,23 +1,23 @@
 You are working at a tiny train station in the middle of nowhere. The station consists of only 3 railways: The main-, the parking- and the siding-rail respectively. There are currently _n_ wagons residing on the parking-rail and your job is to move them to the main-rail. It would've been a very easy task had it not been for the fact that the wagons have been parked in the wrong order. Each wagon has a number assigned to it and in the end **all wagons have to be on the main rail in the correct order**.
 
-Your task is to move all wagons from the parking- to the main-rail with the minimum number of moves possible. You may assume that there is sufficient space on all rails to house all wagons.
+Your task is to move all wagons from the parking- to the main-rail with the minimum number of moves possible such that the wagons are sorted in ascending order, i.e. the highest-value-wagon being closest to the intersection. You may assume that there is sufficient space on all rails to house all wagons.
 
-Before reading on I encourage you to give the problem a try yourself. Though it took me personally a a while to come up with a solution, I had a lot of fun in discovering it.
+Before reading on I encourage you to give the problem a try yourself. Though it took me personally a while to come up with a solution, I had a lot of fun in discovering it.
+
+![example image of the layout of the rails: the siding, parking and main rail intersect at one point, on the parking-rail stand wagons with values 1,2,2,0,2,1](img/rails_ex_image.png)
 
 ---
 
 ## Solution
 
-The following is what I have come up with after studying the problem for an extensive amount of time. There might be other (perhaps even a lot simpler) ways to tackle the problem, but this is what I've come up with. Note that while I claim and am convinced that the following proposed solution will produce optimal results for any given input, I at the same time want to make it very clear that I have not formally verified or proven this to be the case. If at any point in time I feel compelled to come back to this I might consider appending such an addition, but for the time being I am content with the intuition underlying it.
-
-Let's get into the actual solution:
+The following is what I have come up with after studying the problem for an extensive amount of time. There might be other (perhaps even a lot simpler) ways to tackle the problem. Note that while I claim and am convinced that the following proposed solution will produce optimal results for any given input, I at the same time want to make it very clear that I have not formally verified or proven this to be the case. If at any point in time I feel compelled to come back to this I might consider appending such an addition, but for the time being I am content with the intuition underlying it.
 
 Though it might at first seem like you don't have much of a choice and therefore cannot really develop a strategy here, the order in which you decide to move the wagons can indeed make a significant difference. Consider the following example:
 
 | \-  | 122021 |
 | --- | ------ |
 
-Going forward we will display the wagons on the siding- and parking-rail in a table as follows: The left cell represents the wagons standing on the siding-rail, the right cell the values on the parking-rail. The divider between them indicates the intersection between the two and the main-rail. Since we won't be touching any wagons on the main-rail (only moving them onto it) we will omit displaying it. Whenever there are no wagons on either of the two rails, we will indicate that with a hyphen (-). The above "positioning", as we'll henceforth call it, therefore represents the initial state when wagons with the values 1,2,2,0,2 and 1 are parked on the parking-rail. In this positioning, we can only start by moving the 1 either to the switching-rail or away to the main rail.
+Going forward we will display the wagons on the siding- and parking-rail in a table as follows: The left cell represents the wagons standing on the siding-rail, the right cell the values on the parking-rail. The divider between them indicates the intersection between the two and the main-rail. Since we won't be touching any wagons on the main-rail (only moving them onto it in the correct order) we will omit displaying it. Whenever there are no wagons on either of the two rails, we will indicate that with a hyphen (-). The above "positioning", as we'll henceforth call it, therefore represents the initial state when wagons with the values 1,2,2,0,2 and 1 are parked on the parking-rail. In this positioning, we can only start by moving the 1 either to the siding-rail or away to the main rail.
 
 We therefore - initially - have no choice; We have to get to the 0 and move it away onto the main-rail. So we start by moving everything else over to the siding-rail (read from left to right):
 
@@ -262,7 +262,7 @@ Let's note down some observations which might prove useful in understanding what
 
 -   We have to touch every wagon at least once
 -   Whenever there is only one wagon with a specific number, we do not have a choice
--   Whenever there are multiple wagons with a specific number, we only have a choice if these wagons are not all positioned on the parking-rail or all on the switching rail
+-   Whenever there are multiple wagons with a specific number, we only have a choice if these wagons are not all positioned on the parking-rail or all on the siding rail
 -   Whenever we can remove a wagon (a wagon with the current number) without moving any other wagons, we should do so
 -   Whenever we have to choose between the rails and pick one, we have to then remove _all_ wagons with the current value from that rail before moving on to the other rail in order to not move wagons unnecessarily
 -   Furthermore, whenever we remove all wagons with a specific value from a rail, the last wagon which will be moved from that rail before moving on to the next value will be a wagon of that specific value (i.e. we shall only go up to the last wagon with that specific value in order to not make unnecessary moves)
