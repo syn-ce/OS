@@ -10,6 +10,8 @@ You are working at a tiny train station in the middle of nowhere. The station co
 
 Your task is to move all wagons from the parking- to the main-rail with the minimum number of moves possible such that the wagons are sorted in ascending order, i.e. the highest-value-wagon being closest to the intersection. You may assume that there is sufficient space on all rails to house all wagons.
 
+**You may never move a particular wagon again once it has been moved to the main-rail**. 
+
 Before reading on I encourage you to give the problem a try yourself. Though it took me personally a while to come up with a solution, I had a lot of fun in discovering it.
 
 ![example image of the layout of the rails: the siding, parking and main rail intersect at one point, on the parking-rail stand wagons with values 1,2,2,0,2,1](img/rails_ex_image.png)
