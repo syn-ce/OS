@@ -3,7 +3,6 @@ package main.java.log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -31,7 +30,7 @@ public class Log {
      *                   right (true) or the left (false). Has to be of the same length as columns.
      */
     public Log(String[] columns, boolean[] alignRight) {
-        String[] headers = Stream.concat(Arrays.stream((new String[]{"Aktion"})), Arrays.stream(columns)).toArray(String[]::new);
+        String[] headers = Stream.concat(Arrays.stream((new String[]{"Action"})), Arrays.stream(columns)).toArray(String[]::new);
         actions.add(headers);
         columnLengths = new Integer[columns.length + 1];
         Arrays.fill(columnLengths, 1);
@@ -98,8 +97,6 @@ public class Log {
         }
         return String.format(s.append("\n").toString(), (Object[]) columnLengths);
     }
-
-    // TODO: implement way to check whether the protokoll has changed since the last time the protokoll has been printed; if not, just return the String previously constructed (should save some time)
 
     /**
      * Converts the log into readable format and prints it into the console.

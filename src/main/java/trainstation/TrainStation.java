@@ -6,14 +6,14 @@ import java.util.*;
 
 /**
  * Contains all the Rails of the station and instructs the Shunter to move all wagons from the parkingRail to the
- * trainRail.
+ * mainRail.
  */
 
 public class TrainStation {
 
     private final Rail parkingRail;
-    private final Rail switchingRail;
-    private final Rail trainRail;
+    private final Rail sidingRail;
+    private final Rail mainRail;
     private final int[] wagonValues;
     private final int[] uniqueWagonValuesAscending;
     private OptimalPathCalculator optimalPathCalculator;
@@ -26,22 +26,22 @@ public class TrainStation {
      * @param wagonValues The values of the wagons in correct order, with the left wagon being the accessible wagon.
      */
     public TrainStation(Integer... wagonValues) {
-        parkingRail = new Rail("parkingRail", wagonValues);
-        switchingRail = new Rail("switchingRail");
-        trainRail = new Rail("trainRail");
+        parkingRail = new Rail("Parking", wagonValues);
+        sidingRail = new Rail("Siding");
+        mainRail = new Rail("Main");
         this.wagonValues = integerToIntArray(wagonValues);
         uniqueWagonValuesAscending = getUniqueWagonValuesAscending(this.wagonValues);
         optimalPathCalculator = new OptimalPathCalculator(this.wagonValues, this.uniqueWagonValuesAscending);
     }
 
     /**
-     * Instruct the Shunter to move the wagons from the parkingRail to the trainRail with as little moves as possible.
+     * Instruct the Shunter to move the wagons from the parkingRail to the mainRail with as little moves as possible.
      * @param print Indicate if the Shunter's log shall be printed
      * @return The log size of the Shunter (i.e. the number of times the Shunter moved a wagon).
      */
     public int moveNew(boolean print) {
         String[] optimalPath = getOptimalPath();
-        shunter = new Shunter(parkingRail, switchingRail, trainRail, uniqueWagonValuesAscending);
+        shunter = new Shunter(parkingRail, sidingRail, mainRail, uniqueWagonValuesAscending);
         shunter.shuntNew(optimalPath, print);
         return shunter.getLogSize();
     }
