@@ -6,7 +6,7 @@
 
 ## The Problem
 
-You are working at a tiny train station in the middle of nowhere. The station consists of only 3 railways: The main-, the parking- and the siding-rail respectively. There are currently _n_ wagons residing on the parking-rail and your job is to move them to the main-rail (referred to as [switching](https://en.wikipedia.org/wiki/Shunting_(rail)). It would've been a very easy task had it not been for the fact that the wagons have been parked in the wrong order. Each wagon has a number assigned to it and in the end **all wagons have to be on the main rail in the correct (ascending) order**.
+You are working at a tiny train station in the middle of nowhere. The station consists of only 3 railways: The main-, the parking- and the siding-rail respectively. There are currently _n_ wagons residing on the parking-rail and your job is to move them to the main-rail (referred to as [shunting/switching](https://en.wikipedia.org/wiki/Shunting_(rail))). It would've been a very easy task had it not been for the fact that the wagons have been parked in the wrong order. Each wagon has a number assigned to it and in the end **all wagons have to be on the main rail in the correct (ascending) order**.
 
 Your task is to move all wagons from the parking- to the main-rail with the minimum number of moves possible such that the wagons are sorted in ascending order, i.e. the highest-value-wagon being closest to the intersection. You may assume that there is sufficient space on all rails to house all wagons.
 
